@@ -5,6 +5,7 @@
 .importzp PAD_A, PAD_B, PAD_SELECT, PAD_START, PAD_U, PAD_D, PAD_L, PAD_R, gamepad, nmi_ready, nmi_count
 .import gamepad_poll, nmi, palette, oam
 
+.exportzp aspect
 .export frame
 
 ;
@@ -368,6 +369,9 @@ draw_friend:
 	lsr 
 	lsr 
 	tax 
+
+	; TODO: Change frame back to 0 if the player is not "moving"
+
 	; put facing in Y
 	ldy facing
 
@@ -416,7 +420,7 @@ draw_friend:
 	bcc @facing_up
 		lda ypos 
 		sec 
-		sbc #$05
+		sbc #$04
 		sta	oam+(FLOATING_FACE_L*4)+0
 		sta	oam+(FLOATING_FACE_R*4)+0
 
