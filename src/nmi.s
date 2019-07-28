@@ -3,7 +3,7 @@
 ;
 
 .export palette, nmi, oam
-.exportzp nmi_ready
+.exportzp nmi_ready, nmi_count
 
 .import frame
 

@@ -2,7 +2,7 @@
 ;
 ;
 
-.importzp PAD_A, PAD_B, PAD_SELECT, PAD_START, PAD_U, PAD_D, PAD_L, PAD_R, gamepad, nmi_ready
+.importzp PAD_A, PAD_B, PAD_SELECT, PAD_START, PAD_U, PAD_D, PAD_L, PAD_R, gamepad, nmi_ready, nmi_count
 .import gamepad_poll, nmi, palette, oam
 
 .export frame
@@ -36,6 +36,7 @@ INES_SRAM   = 0 ; 1 = battery backed SRAM at $6000-7FFF
 xpos:			.res 1
 ypos:			.res 1
 aspect:			.res 1
+facing:			.res 1
 temp:			.res 1
 current_tile:	.res 1
 
@@ -162,12 +163,17 @@ main:
 	sta ypos
 	lda	#$01
 	sta	aspect
+	lda #FACING_DOWN
+	sta facing
 	:
 		nop	
 		jmp :-
 ;
 ;	frame
 ;
+
+FACING_UP=$01
+FACING_DOWN=$00
 
 .segment "CODE"
 frame:
@@ -197,6 +203,8 @@ frame:
 		tax 
 		jsr is_solid
 		bcs :+
+		lda #FACING_DOWN
+		sta facing
 		inc ypos
 	:
 	lda gamepad
@@ -224,6 +232,8 @@ frame:
 		tax 
 		jsr is_solid
 		bcs :+
+		lda #FACING_UP
+		sta facing
 		dec ypos
 	:		
 	lda gamepad
@@ -329,7 +339,24 @@ SELF_TR=$05
 SELF_BL=$06
 SELF_BR=$07
 
+.segment "RODATA"
+player_sprites:
+	.byte $0C, $0D, $0E, $0F	; facing down
+	.byte $10, $11, $12, $13 	; facing up
+
+.segment "CODE"
 draw_friend:
+	; put frame in x
+	lda nmi_count
+	and #%00010000
+	lsr 
+	lsr 
+	lsr 
+	lsr 
+	tax 
+	; put facing in Y
+	ldy facing
+
 	; top y coordinate
 	lda ypos ; center y coordinate
 	sta	oam+(SELF_BL*4)+0
@@ -345,20 +372,62 @@ draw_friend:
 	adc #$0C
 	sta	oam+(FLOATING_FACE_L*4)+0
 	sta	oam+(FLOATING_FACE_R*4)+0
+	tya 
+	and #%00000011
+	cmp #%00000001
+	bne :+
+		lda #$FF
+		sta	oam+(FLOATING_FACE_L*4)+0
+		sta	oam+(FLOATING_FACE_R*4)+0
+	:
 
 	; tile
-	lda	#$04
+	txa 
+	beq :+
+		lda	#$06 
+		bne :++
+	:
+		lda #$04
+	:
 	sta	oam+(FLOATING_FACE_L*4)+1
-	lda	#$05
+	txa 
+	beq :+
+		lda	#$07
+		bne :++
+	:
+		lda #$05
+	:	
 	sta	oam+(FLOATING_FACE_R*4)+1
-	lda #$08
+
+	tya 
+	and #%00000011
+	clc 
+	asl 
+	asl 
+	tay	
+	lda player_sprites,Y
 	sta	oam+(SELF_TL*4)+1
-	lda #$09
+	iny 
+	lda player_sprites,Y
 	sta	oam+(SELF_TR*4)+1
-	lda #$0A
+	; Y = 1
+	iny 
+	txa 
+	beq :+
+		iny ; Y = 3
+	:
+	lda player_sprites,Y
 	sta	oam+(SELF_BL*4)+1
-	lda #$0B
+	txa 
+	beq :+
+		dey 
+		bne :++
+	:
+		iny 
+	:	
+	lda player_sprites,Y
 	sta	oam+(SELF_BR*4)+1
+
 	lda aspect
 	sta oam+(ASPECT_ICON*4)+1
 
@@ -366,6 +435,12 @@ draw_friend:
 	sta oam+(ASPECT_ICON*4)+2
 	sta oam+(SELF_TL*4)+2
 	sta oam+(SELF_TR*4)+2
+	txa 
+	clc 
+	ror 
+	ror 
+	ror 
+	ora aspect 
 	sta oam+(SELF_BL*4)+2
 	sta oam+(SELF_BR*4)+2
 	lda #%00000000
