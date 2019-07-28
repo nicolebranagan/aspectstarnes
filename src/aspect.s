@@ -62,7 +62,7 @@ test_map:
 
 map_tiles:
 .byte $08,$04,$0C,$10,$14,$18
-map_attributes:
+map_attributes: ; basically just palettes
 .byte %00000001, %00000000, %00000001, %00000010, %00000011, %00000000
 MAP_WIDTH=$10
 MAP_HEIGHT=$0F
