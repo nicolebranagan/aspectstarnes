@@ -321,54 +321,72 @@ is_solid:	; sets carry flag if x, y is solid
 	tay 
 	rts 
 
+FLOATING_FACE_L=$00
+FLOATING_FACE_R=$01
+ASPECT_ICON=$02
+SELF_TL=$04
+SELF_TR=$05
+SELF_BL=$06
+SELF_BR=$07
+
 draw_friend:
-	; draw horrifying floating face
-	lda ypos
-	sec	
-	sbc	#$04
-	sta	oam+(0*4)+0
-	sta	oam+(1*4)+0
-	lda	#$04
-	sta	oam+(0*4)+1
-	lda	#$05
-	sta	oam+(1*4)+1
-	lda #%00000000
-	sta oam+(0*4)+2
-	sta oam+(1*4)+2
-	; draw body and suit
+	; top y coordinate
 	lda ypos ; center y coordinate
+	sta	oam+(SELF_BL*4)+0
+	sta	oam+(SELF_BR*4)+0
 	sec 
 	sbc #$08
-	sta	oam+(4*4)+0
-	sta	oam+(5*4)+0
-	clc	
-	adc #$08
-	sta	oam+(6*4)+0
-	sta	oam+(7*4)+0
+	sta	oam+(SELF_TL*4)+0
+	sta	oam+(SELF_TR*4)+0
+	sec 
+	sbc #$08
+	sta oam+(ASPECT_ICON*4)+0
+	clc 
+	adc #$0C
+	sta	oam+(FLOATING_FACE_L*4)+0
+	sta	oam+(FLOATING_FACE_R*4)+0
+
+	; tile
+	lda	#$04
+	sta	oam+(FLOATING_FACE_L*4)+1
+	lda	#$05
+	sta	oam+(FLOATING_FACE_R*4)+1
 	lda #$08
-	sta	oam+(4*4)+1
+	sta	oam+(SELF_TL*4)+1
 	lda #$09
-	sta	oam+(5*4)+1
+	sta	oam+(SELF_TR*4)+1
 	lda #$0A
-	sta	oam+(6*4)+1
+	sta	oam+(SELF_BL*4)+1
 	lda #$0B
-	sta	oam+(7*4)+1
+	sta	oam+(SELF_BR*4)+1
 	lda aspect
-	sta oam+(4*4)+2
-	sta oam+(5*4)+2
-	sta oam+(6*4)+2
-	sta oam+(7*4)+2
+	sta oam+(ASPECT_ICON*4)+1
+
+	; palette (aspect is the palette for body)
+	sta oam+(ASPECT_ICON*4)+2
+	sta oam+(SELF_TL*4)+2
+	sta oam+(SELF_TR*4)+2
+	sta oam+(SELF_BL*4)+2
+	sta oam+(SELF_BR*4)+2
+	lda #%00000000
+	sta oam+(FLOATING_FACE_L*4)+2
+	sta oam+(FLOATING_FACE_R*4)+2
+
+	; left x coordinate
 	lda	xpos ; center x coordinate
 	sec 
 	sbc #$08
-	sta oam+(0*4)+3	; floating face
-	sta	oam+(4*4)+3
-	sta	oam+(6*4)+3
+	sta oam+(FLOATING_FACE_L*4)+3	; floating face
+	sta	oam+(SELF_TL*4)+3
+	sta	oam+(SELF_BL*4)+3
 	clc	
 	adc	#$08
-	sta oam+(1*4)+3 ; floating face
-	sta	oam+(5*4)+3
-	sta	oam+(7*4)+3
+	sta oam+(FLOATING_FACE_R*4)+3 ; floating face
+	sta	oam+(SELF_TR*4)+3
+	sta	oam+(SELF_BR*4)+3
+	sec 
+	sbc #$04
+	sta oam+(ASPECT_ICON*4)+3
 	rts	
 
 clear_nametable:
