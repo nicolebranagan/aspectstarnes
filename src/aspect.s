@@ -38,6 +38,7 @@ xpos:			.res 1
 ypos:			.res 1
 aspect:			.res 1
 facing:			.res 1
+moving:			.res 1
 temp:			.res 1
 current_tile:	.res 1
 
@@ -166,6 +167,7 @@ main:
 	sta	aspect
 	lda #FACING_DOWN
 	sta facing
+	sta moving
 	:
 		nop	
 		jmp :-
@@ -184,6 +186,9 @@ frame:
 	lda	gamepad
 	and #PAD_D
 	beq :+
+		lda #FACING_DOWN
+		sta facing
+
 		lda ypos
 		clc 
 		adc #$08
@@ -206,14 +211,17 @@ frame:
 		tax 
 		jsr is_solid
 		bcs :+
-		lda #FACING_DOWN
-		sta facing
 		inc ypos
-		jsr @done
+		lda #$01
+		sta moving
+		jmp @done
 	:
 	lda gamepad
 	and #PAD_U
 	beq :+
+		lda #FACING_UP
+		sta facing
+
 		lda ypos
 		sec 
 		sbc #$07
@@ -236,14 +244,17 @@ frame:
 		tax 
 		jsr is_solid
 		bcs :+
-		lda #FACING_UP
-		sta facing
 		dec ypos
-		jsr @done
+		lda #$01
+		sta moving
+		jmp @done
 	:		
 	lda gamepad
 	and #PAD_R
 	beq :+
+		lda #FACING_RIGHT
+		sta facing
+
 		lda xpos
 		clc 
 		adc #$07
@@ -267,14 +278,17 @@ frame:
 		jsr is_solid
 		bcs :+
 
-		lda #FACING_RIGHT
-		sta facing
 		inc xpos
-		jsr @done
+		lda #$01
+		sta moving
+		jmp @done
 	:
 	lda gamepad
 	and #PAD_L
 	beq :+
+		lda #FACING_LEFT
+		sta facing
+
 		lda xpos
 		sec 
 		sbc #$07
@@ -298,10 +312,10 @@ frame:
 		jsr is_solid
 		bcs :+
 
-		lda #FACING_LEFT
-		sta facing
 		dec xpos
-		jsr @done
+		lda #$01
+		sta moving
+		jmp @done
 	:
 	lda gamepad
 	and #PAD_START
@@ -311,6 +325,8 @@ frame:
 		lda #$03
 		sta aspect
 	:
+	lda #$00
+	sta moving
 	@done:
 	jsr draw_friend
 	lda #$01
@@ -363,14 +379,18 @@ player_sprites:
 draw_friend:
 	; put frame in x
 	lda nmi_count
-	and #%00010000
+	and #%00001000
 	lsr 
-	lsr 
+	
 	lsr 
 	lsr 
 	tax 
 
-	; TODO: Change frame back to 0 if the player is not "moving"
+	; Change frame back to 0 if the player is not "moving"
+	lda moving
+	bne :+
+		tax 
+	:
 
 	; put facing in Y
 	ldy facing
@@ -488,14 +508,31 @@ draw_friend:
 		iny 
 		lda player_sprites,Y
 		sta	oam+(SELF_TL*4)+1
-		bcs :++
+		bcs @donetop
 	:
 		lda player_sprites,Y
-		sta	oam+(SELF_TL*4)+1
+		pha 
+		txa 
+		beq :+
+			pla 
+			sta	oam+(SELF_TR*4)+1
+			bne :++
+		:
+			pla 
+			sta	oam+(SELF_TL*4)+1
+		:
 		iny 
 		lda player_sprites,Y
-		sta	oam+(SELF_TR*4)+1
-	:
+		pha 
+		txa 
+		beq :+
+			pla 
+			sta	oam+(SELF_TL*4)+1
+			bne @donetop
+		:
+			pla 
+			sta	oam+(SELF_TR*4)+1
+	@donetop:
 	; Y = 1
 
 	iny 
@@ -528,16 +565,6 @@ draw_friend:
 	ora aspect 
 	sta oam+(SELF_BL*4)+2
 	sta oam+(SELF_BR*4)+2
-	sta temp 
-
-	lda facing 
-	cmp #FACING_LEFT
-	bcc :+
-		lda temp 
-		bcs :++
-	:
-		lda aspect 
-	:
 	sta oam+(SELF_TL*4)+2
 	sta oam+(SELF_TR*4)+2
 
