@@ -174,6 +174,8 @@ main:
 
 FACING_UP=$01
 FACING_DOWN=$00
+FACING_LEFT=$02
+FACING_RIGHT=$03
 
 .segment "CODE"
 frame:
@@ -206,6 +208,7 @@ frame:
 		lda #FACING_DOWN
 		sta facing
 		inc ypos
+		jsr @done
 	:
 	lda gamepad
 	and #PAD_U
@@ -235,6 +238,7 @@ frame:
 		lda #FACING_UP
 		sta facing
 		dec ypos
+		jsr @done
 	:		
 	lda gamepad
 	and #PAD_R
@@ -262,7 +266,10 @@ frame:
 		jsr is_solid
 		bcs :+
 
+		lda #FACING_RIGHT
+		sta facing
 		inc xpos
+		jsr @done
 	:
 	lda gamepad
 	and #PAD_L
@@ -289,7 +296,11 @@ frame:
 		tay 
 		jsr is_solid
 		bcs :+
+
+		lda #FACING_LEFT
+		sta facing
 		dec xpos
+		jsr @done
 	:
 	lda gamepad
 	and #PAD_START
@@ -299,6 +310,7 @@ frame:
 		lda #$03
 		sta aspect
 	:
+	@done:
 	jsr draw_friend
 	lda #$01
 	sta	nmi_ready	
@@ -343,6 +355,8 @@ SELF_BR=$07
 player_sprites:
 	.byte $0C, $0D, $0E, $0F	; facing down
 	.byte $10, $11, $12, $13 	; facing up
+	.byte $14, $15, $16, $17    ; facing left
+	.byte $18, $19, $1A, $1B	; facing left, frame 2
 
 .segment "CODE"
 draw_friend:
@@ -356,6 +370,21 @@ draw_friend:
 	tax 
 	; put facing in Y
 	ldy facing
+
+	cpy #FACING_LEFT
+	bcc :++ ; facing left or right
+		txa 
+		tay 
+		iny 
+		iny ; Set frame to frame 	
+		ldx #$00
+		lda facing
+		cmp #FACING_RIGHT
+		bne :+
+			; Facing right case, use X to flip all
+			ldx #$01
+		:
+	:	
 
 	; top y coordinate
 	lda ypos ; center y coordinate
@@ -381,36 +410,90 @@ draw_friend:
 		sta	oam+(FLOATING_FACE_R*4)+0
 	:
 
-	; tile
-	txa 
-	beq :+
-		lda	#$06 
-		bne :++
-	:
-		lda #$04
-	:
-	sta	oam+(FLOATING_FACE_L*4)+1
-	txa 
-	beq :+
-		lda	#$07
-		bne :++
-	:
-		lda #$05
-	:	
-	sta	oam+(FLOATING_FACE_R*4)+1
+	; floating face sprites
+	lda facing 
+	cmp #FACING_LEFT
+	bcc @facing_up
+		lda ypos 
+		sec 
+		sbc #$05
+		sta	oam+(FLOATING_FACE_L*4)+0
+		sta	oam+(FLOATING_FACE_R*4)+0
 
+		cpy #$03
+		beq :+
+			lda	#$0A 
+			bne :++
+		:
+			lda #$08
+		:
+		cpx #$00
+		beq :+
+			sta	oam+(FLOATING_FACE_R*4)+1
+			bne :++
+		:
+			sta	oam+(FLOATING_FACE_L*4)+1
+		:
+		cpy #$03
+		beq :+
+			lda	#$0B
+			bne :++
+		:
+			lda #$09
+		:	
+		cpx #$00
+		beq :+
+			sta	oam+(FLOATING_FACE_L*4)+1
+			bne :++
+		:
+			sta	oam+(FLOATING_FACE_R*4)+1
+		:
+		sec	
+		bcs @suit
+
+	@facing_up:
+		txa 
+		beq :+
+			lda	#$06 
+			bne :++
+		:
+			lda #$04
+		:
+		sta	oam+(FLOATING_FACE_L*4)+1
+		txa 
+		beq :+
+			lda	#$07
+			bne :++
+		:
+			lda #$05
+		:	
+		sta	oam+(FLOATING_FACE_R*4)+1
+
+	@suit:
 	tya 
 	and #%00000011
 	clc 
 	asl 
 	asl 
 	tay	
-	lda player_sprites,Y
-	sta	oam+(SELF_TL*4)+1
-	iny 
-	lda player_sprites,Y
-	sta	oam+(SELF_TR*4)+1
+	lda facing 
+	cmp #FACING_RIGHT 
+	bne :+
+		lda player_sprites,Y
+		sta	oam+(SELF_TR*4)+1
+		iny 
+		lda player_sprites,Y
+		sta	oam+(SELF_TL*4)+1
+		bcs :++
+	:
+		lda player_sprites,Y
+		sta	oam+(SELF_TL*4)+1
+		iny 
+		lda player_sprites,Y
+		sta	oam+(SELF_TR*4)+1
+	:
 	; Y = 1
+
 	iny 
 	txa 
 	beq :+
@@ -433,8 +516,6 @@ draw_friend:
 
 	; palette (aspect is the palette for body)
 	sta oam+(ASPECT_ICON*4)+2
-	sta oam+(SELF_TL*4)+2
-	sta oam+(SELF_TR*4)+2
 	txa 
 	clc 
 	ror 
@@ -443,9 +524,31 @@ draw_friend:
 	ora aspect 
 	sta oam+(SELF_BL*4)+2
 	sta oam+(SELF_BR*4)+2
+	sta temp 
+
+	lda facing 
+	cmp #FACING_LEFT
+	bcc :+
+		lda temp 
+		bcs :++
+	:
+		lda aspect 
+	:
+	sta oam+(SELF_TL*4)+2
+	sta oam+(SELF_TR*4)+2
+
+	lda facing 
+	cmp #FACING_RIGHT
+	bne :+
+		lda #%01000000
+		sta oam+(FLOATING_FACE_L*4)+2
+		sta oam+(FLOATING_FACE_R*4)+2
+		bne :++
+	:
 	lda #%00000000
 	sta oam+(FLOATING_FACE_L*4)+2
 	sta oam+(FLOATING_FACE_R*4)+2
+	:
 
 	; left x coordinate
 	lda	xpos ; center x coordinate
