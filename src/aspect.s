@@ -62,8 +62,8 @@ test_map:
 
 map_tiles:
 .byte $08,$04,$0C,$10,$14,$18
-map_attributes: ; basically just palettes
-.byte %00000001, %00000000, %00000001, %00000010, %00000011, %00000000
+map_attributes: ; xxxSAAPP - P: Palette, A: Aspect, S: Solid
+.byte %00000001, %00010000, %00000101, %00001010, %00001111, %00010000
 MAP_WIDTH=$10
 MAP_HEIGHT=$0F
 
@@ -348,6 +348,9 @@ is_solid:	; sets carry flag if x, y is solid
 	tax 
 	jsr get_map_tile_for_x_y
 	lda current_tile
+	tay 
+	lda map_attributes,Y
+	and #%00010000 ; Mask off solidity bit
 	beq :+
 	sec 
 	bcs :++
@@ -702,11 +705,13 @@ write_attribute_byte:
 	lda test_map,X	
 	tay	
 	lda	map_attributes,Y	
+	and #%00000011
 	sta temp	
 	inx	
 	lda	test_map,X
 	tay	
 	lda	map_attributes,Y
+	and #%00000011
 	asl	
 	asl 
 	ora	temp
@@ -719,6 +724,7 @@ write_attribute_byte:
 	lda	test_map,X
 	tay	
 	lda	map_attributes,Y
+	and #%00000011
 	asl	
 	asl 
 	asl	
@@ -729,6 +735,7 @@ write_attribute_byte:
 	lda	test_map,X
 	tay	
 	lda	map_attributes,Y
+	and #%00000011
 	asl	
 	asl 
 	asl	
