@@ -182,6 +182,7 @@ FACING_RIGHT=$03
 
 .segment "CODE"
 frame:
+	jsr check_player_aspect
 	jsr gamepad_poll	; read gamepad
 	lda	gamepad
 	and #PAD_D
@@ -332,6 +333,32 @@ frame:
 	lda #$01
 	sta	nmi_ready	
 	rts	
+
+check_player_aspect:
+	lda ypos
+	lsr	
+	lsr	
+	lsr  
+	tay 
+	lda xpos 
+	lsr 
+	lsr 
+	lsr 
+	tax 
+	jsr get_map_tile_for_x_y
+	lda current_tile
+	tay 
+	lda map_attributes,Y
+	and #%00001100 ; Mask off aspect bits
+	beq @done
+	lsr 
+	lsr 
+	cmp aspect
+	beq @done
+	; TODO: The player has a new aspect, this must be celebrated
+	sta aspect 
+	@done:
+	rts 
 
 is_solid:	; sets carry flag if x, y is solid
 	tya 
