@@ -4,6 +4,7 @@
 
 .importzp PAD_A, PAD_B, PAD_SELECT, PAD_START, PAD_U, PAD_D, PAD_L, PAD_R, gamepad, nmi_ready, nmi_count
 .import gamepad_poll, nmi, palette, oam, bullet_fire, bullet_update, bullet_init, bullet_draw
+.import enemy_init, enemy_draw
 
 .exportzp aspect, xpos, ypos, facing, FACING_DOWN, FACING_LEFT, FACING_RIGHT, FACING_UP
 .export frame, is_solid
@@ -167,6 +168,7 @@ main:
 	sta facing
 	sta moving
 	jsr bullet_init
+	jsr enemy_init
 	lda #$01
 	sta	nmi_ready	
 	:
@@ -338,6 +340,7 @@ frame:
 	@done:
 	jsr draw_friend
 	jsr bullet_draw
+	jsr enemy_draw
 	lda #$01
 	sta	nmi_ready	
 	rts	
