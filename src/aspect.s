@@ -3,10 +3,10 @@
 ;
 
 .importzp PAD_A, PAD_B, PAD_SELECT, PAD_START, PAD_U, PAD_D, PAD_L, PAD_R, gamepad, nmi_ready, nmi_count
-.import gamepad_poll, nmi, palette, oam
+.import gamepad_poll, nmi, palette, oam, bullet_fire, bullet_update, bullet_init, bullet_draw
 
-.exportzp aspect
-.export frame
+.exportzp aspect, xpos, ypos, facing, FACING_DOWN, FACING_LEFT, FACING_RIGHT, FACING_UP
+.export frame, is_solid
 
 ;
 ; iNES header
@@ -157,8 +157,6 @@ main:
 		cpx #32
 		bcc :-
 	jsr draw_background
-	lda #$01
-	sta	nmi_ready	
 	lda #$80
 	sta xpos
 	lda #$60
@@ -168,6 +166,9 @@ main:
 	lda #FACING_DOWN
 	sta facing
 	sta moving
+	jsr bullet_init
+	lda #$01
+	sta	nmi_ready	
 	:
 		nop	
 		jmp :-
@@ -183,7 +184,13 @@ FACING_RIGHT=$03
 .segment "CODE"
 frame:
 	jsr check_player_aspect
+	jsr bullet_update
 	jsr gamepad_poll	; read gamepad
+	lda gamepad
+	and #PAD_A
+	beq :+
+		jsr bullet_fire
+	:
 	lda	gamepad
 	and #PAD_D
 	beq :+
@@ -330,6 +337,7 @@ frame:
 	sta moving
 	@done:
 	jsr draw_friend
+	jsr bullet_draw
 	lda #$01
 	sta	nmi_ready	
 	rts	
@@ -390,9 +398,9 @@ is_solid:	; sets carry flag if x, y is solid
 	tay 
 	rts 
 
-FLOATING_FACE_L=$00
-FLOATING_FACE_R=$01
-ASPECT_ICON=$02
+FLOATING_FACE_L=$01
+FLOATING_FACE_R=$02
+ASPECT_ICON=$03
 SELF_TL=$04
 SELF_TR=$05
 SELF_BL=$06
