@@ -1,7 +1,7 @@
 .importzp aspect, xpos, ypos, facing, FACING_UP, FACING_DOWN, FACING_LEFT, FACING_RIGHT
 .import is_solid, oam
 
-.export bullet_init, bullet_draw, bullet_fire, bullet_update
+.export bullet_init, bullet_draw, bullet_fire, bullet_update, bullety, bulletx, bulletasp
 
 .segment "ZEROPAGE"
 bulletx:    .res 1

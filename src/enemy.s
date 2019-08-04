@@ -1,4 +1,4 @@
-.importzp nmi_count, FACING_DOWN, FACING_UP, FACING_LEFT, FACING_RIGHT, xpos, ypos, current_tile
+.importzp nmi_count, FACING_DOWN, FACING_UP, FACING_LEFT, FACING_RIGHT, xpos, ypos, current_tile, bullety, bulletx, bulletasp
 .import oam, is_solid, get_map_tile_for_x_y, map_attributes
 .export enemy_draw, enemy_init, enemy_update
 
@@ -56,7 +56,7 @@ enemy_init:
     :
         lda #$FF
         sta enemy_y,X ; Store 255 in the y position
-        lda #$FF
+        lda #$00
         sta enemy_face,X 
         lda #$00
         sta enemy_attr,X 
@@ -66,21 +66,21 @@ enemy_init:
     lda #$40
     sta enemy_y
     sta enemy_x
-    lda #$00
+    lda #$01
     sta enemy_asp 
 
     lda #$38
     sta enemy_y+1
     lda #$80
     sta enemy_x+1
-    lda #$00
+    lda #$02
     sta enemy_asp+1
 
     lda #$40
     sta enemy_y+2
     lda #$B0
     sta enemy_x+2
-    lda #$00
+    lda #$03
     sta enemy_asp+2
 
     rts 
@@ -116,7 +116,7 @@ update_single_enemy:
         :
         rts 
     :
-
+    jsr check_if_dead
     jsr check_enemy_aspect
     lda nmi_count 
     adc enemy_y,X 
@@ -235,6 +235,31 @@ check_enemy_aspect:
     tax 
     rts 
 
+check_if_dead:
+    lda enemy_asp,X 
+    cmp bulletasp 
+    beq :+
+        rts 
+    :
+    lda enemy_x,X 
+    eor bulletx 
+    and #%11111110
+    beq :+
+        rts 
+    :
+    lda enemy_y,X 
+    eor bullety 
+    and #%11111110
+    beq :+
+        rts 
+    :
+    lda #$FF
+    sta bullety 
+    sta enemy_face,X 
+    lda #$00
+    sta enemy_asp,X 
+    rts 
+
 enemy_draw:
     lda #$00
     sta temp
@@ -335,24 +360,21 @@ draw_single_enemy:
 
     @got_frame_and_flipped:
     ; aspect icon
-    lda enemy_asp,X 
-    beq :+
-        lda enemy_y,X
-        sec 
-        sbc #$10
-        sta oam,Y
-        iny 
-        lda enemy_asp,X
-        sta oam,Y
-        iny 
-        sta oam,Y
-        iny 
-        lda enemy_x,X
-        sec 
-        sbc #$04
-        sta oam,Y
-        iny 
-    :
+    lda enemy_y,X
+    sec 
+    sbc #$10
+    sta oam,Y
+    iny 
+    lda enemy_asp,X
+    sta oam,Y
+    iny 
+    sta oam,Y
+    iny 
+    lda enemy_x,X
+    sec 
+    sbc #$04
+    sta oam,Y
+    iny 
 
     ; y position
     lda enemy_y,X
