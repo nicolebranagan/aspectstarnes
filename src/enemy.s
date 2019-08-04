@@ -56,29 +56,31 @@ enemy_init:
     :
         lda #$FF
         sta enemy_y,X ; Store 255 in the y position
-        lda #FACING_DOWN
+        lda #$FF
         sta enemy_face,X 
+        lda #$00
+        sta enemy_attr,X 
         inx 
         cpx #$08
         bne :-
     lda #$40
     sta enemy_y
     sta enemy_x
-    lda #$01
+    lda #$00
     sta enemy_asp 
 
     lda #$38
     sta enemy_y+1
     lda #$80
     sta enemy_x+1
-    lda #$02
+    lda #$00
     sta enemy_asp+1
 
     lda #$40
     sta enemy_y+2
     lda #$B0
     sta enemy_x+2
-    lda #$03
+    lda #$00
     sta enemy_asp+2
 
     rts 
@@ -98,6 +100,23 @@ update_single_enemy:
     bne :+
         rts 
     :
+
+    lda enemy_face,X 
+    cmp #$FF ; is this an explosion
+    bne :++
+    	lda nmi_count
+	    and #%00000011
+        bne :+ 
+        inc enemy_attr,X 
+        lda #$08
+        cmp enemy_attr,X  
+        bne :+
+            lda #$FF
+            sta enemy_y,X 
+        :
+        rts 
+    :
+
     jsr check_enemy_aspect
     lda nmi_count 
     adc enemy_y,X 
@@ -239,21 +258,44 @@ enemy_draw:
 
 .segment "RODATA"
 enemy_sprites:
-    .byte $20, $21, $22, $23
+    .byte $20, $21, $22, $23 ; mouse
     .byte $24, $25, $26, $27
     .byte $28, $29, $2a, $2b
     .byte $2c, $2d, $2e, $2f
+    .byte $20, $21, $22, $23 ; bird
+    .byte $24, $25, $26, $27
+    .byte $28, $29, $2a, $2b
+    .byte $2c, $2d, $2e, $2f
+    .byte $20, $21, $22, $23 ; dog
+    .byte $24, $25, $26, $27
+    .byte $28, $29, $2a, $2b
+    .byte $2c, $2d, $2e, $2f
+    .byte $e0, $e1, $e2, $e3 ; explosion  frames
+    .byte $e4, $e5, $e6, $e7
+    .byte $e8, $e9, $ea, $eb 
+    .byte $ec, $ed, $ee, $ef
+    .byte $f0, $f1, $f2, $f3 ; explosion 1
+    .byte $f4, $f5, $f6, $f7
+    .byte $f8, $f9, $fa, $fb 
+    .byte $fc, $fd, $fe, $ff
 
 .segment "CODE"
 ;
 ; call with enemy ID in "X", incrementing location in OAM in Y
 ;
 draw_single_enemy:
-    lda enemy_y,X
-    cmp #$FF
+    lda enemy_face,X 
+    cmp #$FF 
     bne :+
-        rts 
+        lda enemy_attr,X 
+        clc 
+        adc #$0C
+        sta frame 
+        lda #$00
+        sta flipped 
+        jmp @got_frame_and_flipped
     :
+
     ; get the animation cycle
     lda nmi_count
 	and #%00001000
@@ -290,23 +332,27 @@ draw_single_enemy:
         sbc #$02
         sta flipped 
     :
-    
+
+    @got_frame_and_flipped:
     ; aspect icon
-    lda enemy_y,X
-    sec 
-    sbc #$10
-    sta oam,Y
-    iny 
-    lda enemy_asp,X
-    sta oam,Y
-    iny 
-    sta oam,Y
-    iny 
-    lda enemy_x,X
-    sec 
-    sbc #$04
-    sta oam,Y
-    iny 
+    lda enemy_asp,X 
+    beq :+
+        lda enemy_y,X
+        sec 
+        sbc #$10
+        sta oam,Y
+        iny 
+        lda enemy_asp,X
+        sta oam,Y
+        iny 
+        sta oam,Y
+        iny 
+        lda enemy_x,X
+        sec 
+        sbc #$04
+        sta oam,Y
+        iny 
+    :
 
     ; y position
     lda enemy_y,X
