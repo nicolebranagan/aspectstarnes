@@ -4,7 +4,7 @@
 
 .importzp PAD_A, PAD_B, PAD_SELECT, PAD_START, PAD_U, PAD_D, PAD_L, PAD_R, gamepad, nmi_ready, nmi_count
 .import gamepad_poll, nmi, palette, oam, bullet_fire, bullet_update, bullet_init, bullet_draw
-.import enemy_init, enemy_draw
+.import enemy_init, enemy_draw, enemy_update
 
 .exportzp aspect, xpos, ypos, facing, FACING_DOWN, FACING_LEFT, FACING_RIGHT, FACING_UP
 .export frame, is_solid
@@ -187,6 +187,7 @@ FACING_RIGHT=$03
 frame:
 	jsr check_player_aspect
 	jsr bullet_update
+	jsr enemy_update
 	jsr gamepad_poll	; read gamepad
 	lda gamepad
 	and #PAD_A

@@ -1,6 +1,6 @@
-.importzp nmi_count, FACING_DOWN, FACING_UP, FACING_LEFT, FACING_RIGHT
+.importzp nmi_count, FACING_DOWN, FACING_UP, FACING_LEFT, FACING_RIGHT, xpos, ypos 
 .import oam
-.export enemy_draw, enemy_init
+.export enemy_draw, enemy_init, enemy_update
 
 .segment "ZEROPAGE"
 enemy_x:    .res 8
@@ -38,7 +38,7 @@ enemy_init:
     :
         lda #$FF
         sta enemy_y,X ; Store 255 in the y position
-        lda #FACING_RIGHT
+        lda #FACING_DOWN
         sta enemy_face,X 
         inx 
         cpx #$08
@@ -63,6 +63,92 @@ enemy_init:
     lda #$03
     sta enemy_asp+2
 
+    rts 
+
+enemy_update:
+    ldx #$00
+    :
+        jsr update_single_enemy
+        inx 
+        cpx #$08
+        bne :-
+    rts 
+
+update_single_enemy:
+    lda enemy_y,X
+    cmp #$FF
+    bne :+
+        rts 
+    :
+    lda nmi_count 
+    adc enemy_y,X 
+    and #%01010000
+    bne @done
+        lda ypos 
+        sec 
+        sbc enemy_y,X
+        bpl :+ ; half-assed absolute value
+            eor #$FF
+            clc 
+            adc #$01
+        :
+        sta frame 
+        lda xpos 
+        sec 
+        sbc enemy_x,X 
+        bpl :+
+            eor #$FF
+            clc 
+            adc #$01
+        :
+        cmp frame 
+        bcc :++
+            ; X is the smaller dimension
+            lda enemy_x,X
+            cmp xpos 
+            bcs :+
+                lda #FACING_RIGHT 
+                sta enemy_face,X
+                jmp @done 
+            :
+            lda #FACING_LEFT
+            sta enemy_face,X
+            jmp @done
+        :
+            ; Y is the smaller dimension
+            lda enemy_y,X
+            cmp ypos 
+            bcs :+
+                lda #FACING_DOWN
+                sta enemy_face,X
+                jmp @done 
+            :
+            lda #FACING_UP
+            sta enemy_face,X
+            jmp @done
+    @done:
+    ; movement
+    lda nmi_count
+    and #%00000011
+    bne @finish
+        lda enemy_face,X
+        cmp #FACING_DOWN
+        bne :+
+            inc enemy_y,X
+            jmp @finish
+        :
+        cmp #FACING_UP
+        bne :+
+            dec enemy_y,X
+            jmp @finish
+        :
+        cmp #FACING_RIGHT
+        bne :+
+            inc enemy_x,X
+            jmp @finish
+        :
+        dec enemy_x,X  
+    @finish:
     rts 
 
 enemy_draw:
