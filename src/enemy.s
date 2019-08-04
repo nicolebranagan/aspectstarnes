@@ -9,6 +9,8 @@ enemy_asp:  .res 8
 enemy_face: .res 8
 enemy_attr: .res 8
 
+temp:       .res 1
+
 .macro iny4
     iny
     iny
@@ -62,27 +64,26 @@ enemy_init:
     rts 
 
 enemy_draw:
-	; alternate y order each phase
+    lda #$00
+    sta temp
+	; flicker
 	lda nmi_count
-	and #%00000001
-    beq :++
-    ldx #$00
+	and #%00000111
+    tax 
     ldy #$20
     :
         jsr draw_single_enemy 
         inx 
         cpx #$08
-        bne :-
+        bne :+
+            ldx #$00
+        :
+        inc temp
+        lda temp 
+        cmp #$08
+        bne :--
     rts 
-    :
-    ldx #$07
-    ldy #$20
-    :
-        jsr draw_single_enemy
-        dex 
-        cpx #$FF
-        bne :-
-    rts 
+
 
 ;
 ; call with enemy ID in "X", incrementing location in OAM in Y
