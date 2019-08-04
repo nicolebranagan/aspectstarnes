@@ -422,7 +422,6 @@ draw_friend:
 	lda nmi_count
 	and #%00001000
 	lsr 
-	
 	lsr 
 	lsr 
 	tax 

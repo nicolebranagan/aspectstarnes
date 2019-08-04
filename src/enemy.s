@@ -10,6 +10,8 @@ enemy_face: .res 8
 enemy_attr: .res 8
 
 temp:       .res 1
+frame:      .res 1
+flipped:    .res 1
 
 .macro iny4
     iny
@@ -36,7 +38,7 @@ enemy_init:
     :
         lda #$FF
         sta enemy_y,X ; Store 255 in the y position
-        lda #FACING_DOWN
+        lda #FACING_RIGHT
         sta enemy_face,X 
         inx 
         cpx #$08
@@ -84,7 +86,14 @@ enemy_draw:
         bne :--
     rts 
 
+.segment "RODATA"
+enemy_sprites:
+    .byte $20, $21, $22, $23
+    .byte $24, $25, $26, $27
+    .byte $28, $29, $2a, $2b
+    .byte $2c, $2d, $2e, $2f
 
+.segment "CODE"
 ;
 ; call with enemy ID in "X", incrementing location in OAM in Y
 ;
@@ -93,6 +102,42 @@ draw_single_enemy:
     cmp #$FF
     bne :+
         rts 
+    :
+    ; get the animation cycle
+    lda nmi_count
+	and #%00001000
+	lsr 
+	lsr 
+	lsr 
+	sta flipped 
+
+    ; get the frame 
+    lda enemy_face,X 
+    cmp #FACING_DOWN
+    bne :+
+        lda #$00
+        sta frame 
+    :
+    lda enemy_face,X 
+    cmp #FACING_UP
+    bne :+
+        lda #$01
+        sta frame 
+    :
+    lda enemy_face,X 
+    cmp #FACING_LEFT 
+    bcc :++  ; Left or right
+        lda #$02
+        sta frame 
+        lda flipped
+        beq :+ 
+            lda #$03
+            sta frame
+        :
+        lda enemy_face,X 
+        sec 
+        sbc #$02
+        sta flipped 
     :
     
     ; aspect icon
@@ -130,25 +175,76 @@ draw_single_enemy:
     dey4
     iny
 
-    ; frame
-    lda #$20
-    sta oam,Y 
-    iny4
-    lda #$21
-    sta oam,Y 
-    iny4 
-    lda #$22
-    sta oam,Y
-    iny4 
-    lda #$23
-    sta oam,Y
-    dey4
-    dey4
-    dey4
-    iny
+    ; save X
+    txa
+    pha
+    ; get the frame
+    lda frame
+    ; multiply by 4
+    clc 
+    adc frame 
+    adc frame
+    adc frame
+    tax 
 
-    ; aspect color
-    lda enemy_asp,X
+    ; frame
+    lda flipped
+    beq :+
+        ; X = 0
+        inx ; X = 1
+        lda enemy_sprites,X 
+        sta oam,Y 
+        dex  ; X = 0
+        iny4
+        lda enemy_sprites,X 
+        sta oam,Y 
+        inx ; X = 1
+        inx ; X = 2
+        inx ; X = 3
+        iny4 
+        lda enemy_sprites,X 
+        sta oam,Y
+        dex  
+        iny4 
+        lda enemy_sprites,X 
+        sta oam,Y
+        dey4
+        dey4
+        dey4
+        iny
+        jmp :++ 
+    :
+        lda enemy_sprites,X 
+        sta oam,Y 
+        inx 
+        iny4
+        lda enemy_sprites,X 
+        sta oam,Y 
+        inx 
+        iny4 
+        lda enemy_sprites,X 
+        sta oam,Y
+        inx 
+        iny4 
+        lda enemy_sprites,X 
+        sta oam,Y
+        dey4
+        dey4
+        dey4
+        iny
+    :
+
+    ; get X back
+    pla 
+    tax 
+
+    ; aspect color and attributes
+    lda flipped 
+    clc 
+    ror 
+    ror 
+    ror 
+    ora enemy_asp,X
     sta oam,Y
     iny4 
     sta oam,Y
