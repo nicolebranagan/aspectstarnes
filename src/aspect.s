@@ -6,8 +6,8 @@
 .import gamepad_poll, nmi, palette, oam, bullet_fire, bullet_update, bullet_init, bullet_draw
 .import enemy_init, enemy_draw, enemy_update
 
-.exportzp aspect, xpos, ypos, facing, FACING_DOWN, FACING_LEFT, FACING_RIGHT, FACING_UP
-.export frame, is_solid
+.exportzp aspect, xpos, ypos, facing, FACING_DOWN, FACING_LEFT, FACING_RIGHT, FACING_UP, current_tile
+.export frame, is_solid, get_map_tile_for_x_y, map_attributes
 
 ;
 ; iNES header

@@ -1,5 +1,5 @@
-.importzp nmi_count, FACING_DOWN, FACING_UP, FACING_LEFT, FACING_RIGHT, xpos, ypos 
-.import oam
+.importzp nmi_count, FACING_DOWN, FACING_UP, FACING_LEFT, FACING_RIGHT, xpos, ypos, current_tile
+.import oam, is_solid, get_map_tile_for_x_y, map_attributes
 .export enemy_draw, enemy_init, enemy_update
 
 .segment "ZEROPAGE"
@@ -26,6 +26,24 @@ flipped:    .res 1
     dey
     dey
 .endmacro 
+
+.macro enemSolid    delx, dely
+    txa 
+    pha ; save X
+    lda enemy_x,X 
+    clc 
+    adc delx 
+    pha 
+    lda enemy_y,X 
+    clc 
+    adc dely 
+    tay 
+    pla 
+    tax 
+    jsr is_solid 
+    pla 
+    tax 
+.endmacro
 
 ;
 ; enemy routines
@@ -80,9 +98,10 @@ update_single_enemy:
     bne :+
         rts 
     :
+    jsr check_enemy_aspect
     lda nmi_count 
     adc enemy_y,X 
-    and #%01010000
+    and #%01010100
     bne @done
         lda ypos 
         sec 
@@ -129,26 +148,72 @@ update_single_enemy:
     @done:
     ; movement
     lda nmi_count
-    and #%00000011
-    bne @finish
+    and enemy_asp,X
+    beq @finish
         lda enemy_face,X
         cmp #FACING_DOWN
         bne :+
+            enemSolid #$00, #$08
+            bcs @finish
             inc enemy_y,X
             jmp @finish
         :
         cmp #FACING_UP
         bne :+
+            enemSolid #$00, #$F8
+            bcs @finish
             dec enemy_y,X
             jmp @finish
         :
         cmp #FACING_RIGHT
         bne :+
+            enemSolid #$08, #$00
+            bcs @finish
             inc enemy_x,X
             jmp @finish
         :
+        enemSolid #$F8, #$00
+        bcs @finish
         dec enemy_x,X  
     @finish:
+    rts 
+
+check_enemy_aspect:
+    txa 
+    pha 
+    lda enemy_x,X 
+    lsr 
+    lsr 
+    lsr 
+    pha 
+    lda  enemy_y,X 
+    lsr 
+    lsr 
+    lsr 
+    tay 
+    pla 
+    tax 
+    jsr get_map_tile_for_x_y
+    lda current_tile
+    tay 
+    lda map_attributes,Y 
+    and #%00001100 ; mask off aspect
+    beq @done
+    lsr 
+    lsr 
+    tay 
+    pla 
+    tax 
+    tya 
+    cmp enemy_asp,X
+    beq :+
+    ; TODO: play sound effect
+    sta enemy_asp,X
+    :
+    rts 
+    @done:
+    pla 
+    tax 
     rts 
 
 enemy_draw:
