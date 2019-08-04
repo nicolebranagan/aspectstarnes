@@ -236,11 +236,6 @@ check_enemy_aspect:
     rts 
 
 check_if_dead:
-    lda enemy_asp,X 
-    cmp bulletasp 
-    beq :+
-        rts 
-    :
     lda enemy_x,X 
     eor bulletx 
     and #%11111110
@@ -255,6 +250,12 @@ check_if_dead:
     :
     lda #$FF
     sta bullety 
+    lda enemy_asp,X 
+    cmp bulletasp 
+    beq :+
+        rts 
+    :
+    lda #$FF 
     sta enemy_face,X 
     lda #$00
     sta enemy_asp,X 
