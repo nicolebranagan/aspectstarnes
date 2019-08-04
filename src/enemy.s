@@ -1,3 +1,4 @@
+.importzp nmi_count, FACING_DOWN, FACING_UP, FACING_LEFT, FACING_RIGHT
 .import oam
 .export enemy_draw, enemy_init
 
@@ -29,10 +30,12 @@ enemy_attr: .res 8
 ;
 .segment "CODE"
 enemy_init:
-    lda #$FF
     ldx #$00
     :
+        lda #$FF
         sta enemy_y,X ; Store 255 in the y position
+        lda #FACING_DOWN
+        sta enemy_face,X 
         inx 
         cpx #$08
         bne :-
@@ -41,15 +44,43 @@ enemy_init:
     sta enemy_x
     lda #$01
     sta enemy_asp 
+
+    lda #$38
+    sta enemy_y+1
+    lda #$80
+    sta enemy_x+1
+    lda #$02
+    sta enemy_asp+1
+
+    lda #$40
+    sta enemy_y+2
+    lda #$B0
+    sta enemy_x+2
+    lda #$03
+    sta enemy_asp+2
+
     rts 
 
 enemy_draw:
+	; alternate y order each phase
+	lda nmi_count
+	and #%00000001
+    beq :++
     ldx #$00
     ldy #$20
     :
         jsr draw_single_enemy 
         inx 
         cpx #$08
+        bne :-
+    rts 
+    :
+    ldx #$07
+    ldy #$20
+    :
+        jsr draw_single_enemy
+        dex 
+        cpx #$FF
         bne :-
     rts 
 
