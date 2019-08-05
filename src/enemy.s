@@ -129,6 +129,12 @@ update_single_enemy:
         rts 
     :
     jsr check_if_dead
+    lda enemy_face,X 
+    cmp #$FF ; is this an explosion
+    bne :+
+        rts 
+    :
+
     jsr check_enemy_aspect
     lda nmi_count 
     adc enemy_y,X 
