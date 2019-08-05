@@ -27,6 +27,18 @@ flipped:    .res 1
     dey
 .endmacro 
 
+.macro absSub   del
+    .scope 
+    sec 
+    sbc del
+    bpl :+
+        eor #$FF
+        clc 
+        adc #$01
+    :
+    .endscope 
+.endmacro
+
 .macro enemSolid    delx, dely
     txa 
     pha ; save X
@@ -237,19 +249,19 @@ check_enemy_aspect:
 
 check_if_dead:
     lda enemy_x,X 
-    eor bulletx 
-    and #%11111110
-    beq :+
+    absSub bulletx 
+    cmp #$03
+    bcc :+
         rts 
     :
     lda enemy_y,X 
-    eor bullety 
-    and #%11111110
-    beq :+
+    absSub bullety 
+    cmp #$03
+    bcc :+
         rts 
     :
-    lda #$FF
-    sta bullety 
+    lda #$FF 
+    sta bullety
     lda enemy_asp,X 
     cmp bulletasp 
     beq :+
