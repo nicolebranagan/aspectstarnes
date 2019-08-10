@@ -40,6 +40,7 @@ flipped:    .res 1
 .endmacro
 
 .macro enemSolid    delx, dely
+    .local @done
     txa 
     pha ; save X
     lda enemy_x,X 
@@ -52,7 +53,10 @@ flipped:    .res 1
     tay 
     pla 
     tax 
-    jsr is_solid 
+    jsr is_solid
+    bcs @done
+    nop ; TODO: Check for enemy-enemy collision
+    @done:
     pla 
     tax 
 .endmacro
@@ -186,33 +190,37 @@ update_single_enemy:
     ; movement
     lda nmi_count
     and enemy_asp,X
-    beq @finish
-        lda enemy_face,X
-        cmp #FACING_DOWN
-        bne :+
-            enemSolid #$00, #$08
-            bcs @finish
-            inc enemy_y,X
-            jmp @finish
-        :
-        cmp #FACING_UP
-        bne :+
-            enemSolid #$00, #$F8
-            bcs @finish
-            dec enemy_y,X
-            jmp @finish
-        :
-        cmp #FACING_RIGHT
-        bne :+
-            enemSolid #$08, #$00
-            bcs @finish
-            inc enemy_x,X
-            jmp @finish
-        :
+    bne :+
+        rts 
+    :
+    lda enemy_face,X
+    cmp #FACING_DOWN
+    bne :+
+        enemSolid #$00, #$08
+        bcs :+
+        inc enemy_y,X
+    :
+    lda enemy_face,X
+    cmp #FACING_UP
+    bne :+
+        enemSolid #$00, #$F8
+        bcs :+
+        dec enemy_y,X
+    :
+    lda enemy_face,X
+    cmp #FACING_RIGHT
+    bne :+
+        enemSolid #$08, #$00
+        bcs :+
+        inc enemy_x,X
+    :
+    lda enemy_face,X
+    cmp #FACING_LEFT
+    bne :+
         enemSolid #$F8, #$00
-        bcs @finish
+        bcs :+
         dec enemy_x,X  
-    @finish:
+    :
     rts 
 
 check_enemy_aspect:
