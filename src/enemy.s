@@ -39,7 +39,27 @@ flipped:    .res 1
     .endscope 
 .endmacro
 
-.macro enemSolid    delx, dely
+.macro enemSolidX delx 
+    .local @done 
+        enemSolidSinglePoint delx, #$00 
+    bcs @done 
+        enemSolidSinglePoint delx, #$07
+    bcs @done 
+        enemSolidSinglePoint delx, #$F9
+    @done:
+.endmacro 
+
+.macro enemSolidY dely 
+    .local @done 
+        enemSolidSinglePoint #$00, dely
+    bcs @done 
+        enemSolidSinglePoint #$07, dely
+    bcs @done 
+        enemSolidSinglePoint #$F9, dely
+    @done:
+.endmacro 
+
+.macro enemSolidSinglePoint    delx, dely
     .local @done
     txa 
     pha ; save X
@@ -196,28 +216,28 @@ update_single_enemy:
     lda enemy_face,X
     cmp #FACING_DOWN
     bne :+
-        enemSolid #$00, #$08
+        enemSolidY #$08
         bcs :+
         inc enemy_y,X
     :
     lda enemy_face,X
     cmp #FACING_UP
     bne :+
-        enemSolid #$00, #$F8
+        enemSolidY #$F8
         bcs :+
         dec enemy_y,X
     :
     lda enemy_face,X
     cmp #FACING_RIGHT
     bne :+
-        enemSolid #$08, #$00
+        enemSolidX #$08
         bcs :+
         inc enemy_x,X
     :
     lda enemy_face,X
     cmp #FACING_LEFT
     bne :+
-        enemSolid #$F8, #$00
+        enemSolidX #$F8
         bcs :+
         dec enemy_x,X  
     :
