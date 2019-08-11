@@ -216,30 +216,34 @@ update_single_enemy:
     lda enemy_face,X
     cmp #FACING_DOWN
     bne :+
-        enemSolidY #$08
-        bcs :+
         inc enemy_y,X
+        enemSolidY #$08
+        bcc :+
+        dec enemy_y,X
     :
     lda enemy_face,X
     cmp #FACING_UP
     bne :+
-        enemSolidY #$F8
-        bcs :+
         dec enemy_y,X
+        enemSolidY #$F8
+        bcc :+
+        inc enemy_y,X
     :
     lda enemy_face,X
     cmp #FACING_RIGHT
     bne :+
-        enemSolidX #$08
-        bcs :+
         inc enemy_x,X
+        enemSolidX #$08
+        bcc :+
+        dec enemy_x,X
     :
     lda enemy_face,X
     cmp #FACING_LEFT
     bne :+
+        dec enemy_x,X 
         enemSolidX #$F8
-        bcs :+
-        dec enemy_x,X  
+        bcc :+
+        inc enemy_x,X  
     :
     rts 
 
