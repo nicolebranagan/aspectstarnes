@@ -128,6 +128,7 @@ enemy_update:
         inx 
         cpx #$08
         bne :-
+    jsr enemy_enemy_collision
     rts 
 
 update_single_enemy:
@@ -309,6 +310,56 @@ check_if_dead:
     sta enemy_face,X 
     lda #$00
     sta enemy_asp,X 
+    rts 
+
+enemy_enemy_collision:
+    ldy #$00
+    ldx #$01
+    innerLoop:
+        lda enemy_y,X 
+        cmp #$FF 
+        beq doneComparison 
+        sta temp 
+        lda enemy_y,Y 
+        absSub temp 
+        cmp #$08
+        bcs doneComparison
+        lda enemy_x,X 
+        sta temp 
+        lda enemy_x,Y 
+        absSub temp
+        cmp #$08
+        bcs doneComparison
+            lda enemy_face,X
+            cmp #FACING_DOWN
+            bne @aa
+                dec enemy_y,X
+            @aa:
+            lda enemy_face,X
+            cmp #FACING_UP
+            bne @bb
+                inc enemy_y,X
+            @bb:
+            lda enemy_face,X
+            cmp #FACING_RIGHT
+            bne @cc
+                dec enemy_x,X
+            @cc:
+            lda enemy_face,X
+            cmp #FACING_LEFT
+            bne @dd
+                inc enemy_x,X  
+            @dd:
+        doneComparison:
+        inx 
+        cpx #$08 
+        bne innerLoop 
+        iny 
+        tya 
+        tax 
+        inx 
+        cpy #$07 
+        bne innerLoop 
     rts 
 
 enemy_draw:
