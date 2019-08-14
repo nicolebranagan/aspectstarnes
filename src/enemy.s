@@ -1,4 +1,4 @@
-.importzp nmi_count, FACING_DOWN, FACING_UP, FACING_LEFT, FACING_RIGHT, xpos, ypos, current_tile, bullety, bulletx, bulletasp
+.importzp nmi_count, FACING_DOWN, FACING_UP, FACING_LEFT, FACING_RIGHT, xpos, ypos, aspect, current_tile, bullety, bulletx, bulletasp, gameState, GAME_DEAD
 .import oam, is_solid, get_map_tile_for_x_y, map_attributes
 .export enemy_draw, enemy_init, enemy_update
 
@@ -154,6 +154,7 @@ update_single_enemy:
         rts 
     :
     jsr check_if_dead
+    jsr check_if_player_dead
     lda enemy_face,X 
     cmp #$FF ; is this an explosion
     bne :+
@@ -310,6 +311,23 @@ check_if_dead:
     sta enemy_face,X 
     lda #$00
     sta enemy_asp,X 
+    rts 
+
+check_if_player_dead:
+    lda enemy_x,X 
+    absSub xpos 
+    cmp #$08
+    bcc :+
+        rts 
+    :
+    lda enemy_y,X 
+    absSub ypos  
+    cmp #$08
+    bcc :+
+        rts 
+    :
+    lda #GAME_DEAD
+    sta gameState
     rts 
 
 enemy_enemy_collision:

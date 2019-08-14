@@ -3,7 +3,7 @@
 ;
 
 .export palette, nmi, oam
-.exportzp nmi_ready, nmi_count
+.exportzp nmi_ready, nmi_count, nmi_mask 
 
 .import frame
 
@@ -11,6 +11,7 @@
 nmi_lock:       .res 1 ; prevents NMI re-entry
 nmi_count:      .res 1 ; is incremented every NMI
 nmi_ready:      .res 1 ; set to 1 to push a PPU frame update, 2 to turn rendering off next NMI
+nmi_mask:		.res 1 ; allows setting attribute bits 
 
 .segment "BSS"
 palette:    .res 32  ; palette buffer for PPU update
@@ -77,6 +78,7 @@ nmi:
 	sta $2000 ; set horizontal nametable increment
 	; enable rendering
 	lda #%00011110
+	ora nmi_mask 
 	sta $2001
 	; flag PPU update complete
 	ldx #0

@@ -1,4 +1,4 @@
-.importzp PAD_A, PAD_B, PAD_SELECT, PAD_START, PAD_U, PAD_D, PAD_L, PAD_R, gamepad, nmi_ready, nmi_count, gameState, GAME_INIT, GAME_RUNNING
+.importzp PAD_A, PAD_B, PAD_SELECT, PAD_START, PAD_U, PAD_D, PAD_L, PAD_R, gamepad, nmi_ready, nmi_count, gameState, GAME_INIT, GAME_RUNNING, GAME_DEAD, nmi_mask
 .import palette, bullet_init, enemy_init, gamepad_poll, oam, bullet_fire, bullet_draw, bullet_update, enemy_init, enemy_draw, enemy_update, ppu_address_tile
 
 .exportzp aspect, xpos, ypos, facing, FACING_DOWN, FACING_LEFT, FACING_RIGHT, FACING_UP, current_tile
@@ -12,6 +12,7 @@ facing:			.res 1
 moving:			.res 1
 temp:			.res 1
 current_tile:	.res 1
+timer:			.res 1
 
 .segment "BSS"
 pointer:		.res 2
@@ -74,6 +75,8 @@ game_init:
 	jsr enemy_init
 	lda #GAME_INIT
 	sta gameState 
+	lda #$00
+	sta timer 
     rts 
 
 ;
@@ -87,7 +90,7 @@ FACING_RIGHT=$03
 
 .segment "RODATA"
 gameUpdate:
-	.word running_update, init_update
+	.word running_update, init_update, dead_update
 
 .segment "CODE"
 game_update: 
@@ -101,8 +104,37 @@ game_update:
 	jmp (pointer)
 
 init_update:
-	lda #GAME_RUNNING
-	sta gameState 
+	lda #%00000001
+	sta nmi_mask
+	inc timer
+	lda timer 
+	cmp #$10
+	bcc :+
+		lda #$00
+		sta nmi_mask 
+		lda #GAME_RUNNING
+		sta gameState 
+		jmp @timer_mask_set
+	:
+	cmp #$0D
+	bcc :+
+		lda #%00100000
+		sta nmi_mask
+		jmp @timer_mask_set
+	:
+	cmp #$08
+	bcc :+
+		lda #%01100000
+		sta nmi_mask
+		jmp @timer_mask_set
+	:
+	cmp #$04
+	bcc :+
+		lda #%11100000
+		sta nmi_mask
+		jmp @timer_mask_set
+	:
+	@timer_mask_set:
 	lda #$01
 	sta	nmi_ready	
 	rts 
@@ -323,6 +355,14 @@ is_solid:	; sets carry flag if x, y is solid
 	tax 
 	pla 
 	tay 
+	rts 
+
+dead_update:
+	lda #$00
+	sta $2001
+	jsr game_init
+	lda #$01
+	sta	nmi_ready	
 	rts 
 
 FLOATING_FACE_L=$01
