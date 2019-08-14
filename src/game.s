@@ -1,4 +1,4 @@
-.importzp PAD_A, PAD_B, PAD_SELECT, PAD_START, PAD_U, PAD_D, PAD_L, PAD_R, gamepad, nmi_ready, nmi_count
+.importzp PAD_A, PAD_B, PAD_SELECT, PAD_START, PAD_U, PAD_D, PAD_L, PAD_R, gamepad, nmi_ready, nmi_count, gameState, GAME_INIT, GAME_RUNNING
 .import palette, bullet_init, enemy_init, gamepad_poll, oam, bullet_fire, bullet_draw, bullet_update, enemy_init, enemy_draw, enemy_update, ppu_address_tile
 
 .exportzp aspect, xpos, ypos, facing, FACING_DOWN, FACING_LEFT, FACING_RIGHT, FACING_UP, current_tile
@@ -12,6 +12,9 @@ facing:			.res 1
 moving:			.res 1
 temp:			.res 1
 current_tile:	.res 1
+
+.segment "BSS"
+pointer:		.res 2
 
 .segment "RODATA"
 level_palette:
@@ -69,6 +72,8 @@ game_init:
 	sta moving
 	jsr bullet_init
 	jsr enemy_init
+	lda #GAME_INIT
+	sta gameState 
     rts 
 
 ;
@@ -80,8 +85,29 @@ FACING_DOWN=$00
 FACING_LEFT=$02
 FACING_RIGHT=$03
 
+.segment "RODATA"
+gameUpdate:
+	.word running_update, init_update
+
 .segment "CODE"
-game_update:
+game_update: 
+	lda gameState  
+	asl
+	tax
+	lda gameUpdate+1,X 
+	sta pointer+1 
+	lda gameUpdate,X 
+	sta pointer
+	jmp (pointer)
+
+init_update:
+	lda #GAME_RUNNING
+	sta gameState 
+	lda #$01
+	sta	nmi_ready	
+	rts 
+
+running_update:
 	jsr check_player_aspect
 	jsr bullet_update
 	jsr enemy_update

@@ -5,10 +5,15 @@
 .importzp nmi_ready 
 .import game_init, game_update, nmi, oam
 
+.exportzp gameState, GAME_RUNNING, GAME_INIT
 .export frame, ppu_address_tile
 
 .segment "ZEROPAGE"
 temp:		.res 1
+gameState:  .res 1
+
+GAME_RUNNING=$00
+GAME_INIT=$01
 
 ;
 ; iNES header
