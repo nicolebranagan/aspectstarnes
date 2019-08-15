@@ -290,13 +290,13 @@ check_enemy_aspect:
 check_if_dead:
     lda enemy_x,X 
     absSub bulletx 
-    cmp #$03
+    cmp #$08
     bcc :+
         rts 
     :
     lda enemy_y,X 
     absSub bullety 
-    cmp #$03
+    cmp #$08
     bcc :+
         rts 
     :
@@ -316,13 +316,13 @@ check_if_dead:
 check_if_player_dead:
     lda enemy_x,X 
     absSub xpos 
-    cmp #$08
+    cmp #$0c
     bcc :+
         rts 
     :
     lda enemy_y,X 
     absSub ypos  
-    cmp #$08
+    cmp #$0C
     bcc :+
         rts 
     :
@@ -340,13 +340,13 @@ enemy_enemy_collision:
         sta temp 
         lda enemy_y,Y 
         absSub temp 
-        cmp #$08
+        cmp #$0C
         bcs doneComparison
         lda enemy_x,X 
         sta temp 
         lda enemy_x,Y 
         absSub temp
-        cmp #$08
+        cmp #$0C
         bcs doneComparison
             lda enemy_face,X
             cmp #FACING_DOWN
