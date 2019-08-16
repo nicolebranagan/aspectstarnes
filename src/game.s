@@ -304,7 +304,7 @@ running_update:
 			inx
 			inx
 			bne :-
-		lda #$08
+		lda #$10
 		sta temp 
 		lda #GAME_PAUSE 
 		sta gameState 
@@ -408,20 +408,19 @@ pause_update:
 		sta nmi_mask
 		jmp @timer_mask_set
 	@timer_mask_set:
-	lda #$01
-	sta	nmi_ready
-
 	lda temp 
 	cmp #$00
 	beq :+
 		dec temp 
+		lda #$01
+		sta	nmi_ready
 		rts 
 	:
 	jsr gamepad_poll 
 	lda gamepad
 	and #PAD_START
 	beq :+
-		lda #$08
+		lda #$10
 		sta temp 
 		lda #$00
 		sta timer 
@@ -429,6 +428,8 @@ pause_update:
 		lda #GAME_RUNNING 
 		sta gameState 
 	:
+	lda #$01
+	sta	nmi_ready
 	rts 
 
 FLOATING_FACE_L=$01
