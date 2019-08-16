@@ -1,4 +1,4 @@
-.importzp PAD_A, PAD_B, PAD_SELECT, PAD_START, PAD_U, PAD_D, PAD_L, PAD_R, gamepad, nmi_ready, nmi_count, gameState, GAME_INIT, GAME_RUNNING, GAME_DEAD, nmi_mask
+.importzp PAD_A, PAD_B, PAD_SELECT, PAD_START, PAD_U, PAD_D, PAD_L, PAD_R, gamepad, nmi_ready, nmi_count, gameState, GAME_INIT, GAME_RUNNING, GAME_DEAD, GAME_PAUSE, nmi_mask
 .import palette, bullet_init, enemy_init, gamepad_poll, oam, bullet_fire, bullet_draw, bullet_update, enemy_init, enemy_draw, enemy_update, ppu_address_tile
 
 .exportzp aspect, xpos, ypos, facing, FACING_DOWN, FACING_LEFT, FACING_RIGHT, FACING_UP, current_tile
@@ -90,7 +90,7 @@ FACING_RIGHT=$03
 
 .segment "RODATA"
 gameUpdate:
-	.word running_update, init_update, dead_update
+	.word running_update, init_update, dead_update, pause_update
 
 .segment "CODE"
 game_update: 
@@ -112,6 +112,8 @@ init_update:
 	bcc :+
 		lda #$00
 		sta nmi_mask 
+		sta timer 
+		sta temp 
 		lda #GAME_RUNNING
 		sta gameState 
 		jmp @timer_mask_set
@@ -283,16 +285,33 @@ running_update:
 		sta moving
 		jmp @done
 	:
-	lda gamepad
-	and #PAD_START
-	beq :+
-		dec aspect
-		bne :+
-		lda #$03
-		sta aspect
-	:
 	lda #$00
 	sta moving
+	lda temp 
+	beq :+
+		dec temp
+		jmp @done
+	:
+	lda gamepad
+	and #PAD_START
+	beq :++ 
+		lda #255
+		ldx #0
+		: ; clear sprites while paused
+			sta oam, X
+			inx
+			inx
+			inx
+			inx
+			bne :-
+		lda #$08
+		sta temp 
+		lda #GAME_PAUSE 
+		sta gameState 
+		lda #$01
+		sta	nmi_ready	
+		rts 
+	:
 	@done:
 	jsr draw_friend
 	jsr bullet_draw
@@ -363,6 +382,53 @@ dead_update:
 	jsr game_init
 	lda #$01
 	sta	nmi_ready	
+	rts 
+
+pause_update:
+	inc timer 
+	lda timer 
+	cmp #$90
+	bcc :+
+		lda #$00
+		sta timer 
+	:
+	cmp #$60
+	bcc :+
+		lda #%00100000
+		sta nmi_mask
+		jmp @timer_mask_set
+	:
+	cmp #$30
+	bcc :+
+		lda #%01000000
+		sta nmi_mask
+		jmp @timer_mask_set
+	:
+		lda #%10000000
+		sta nmi_mask
+		jmp @timer_mask_set
+	@timer_mask_set:
+	lda #$01
+	sta	nmi_ready
+
+	lda temp 
+	cmp #$00
+	beq :+
+		dec temp 
+		rts 
+	:
+	jsr gamepad_poll 
+	lda gamepad
+	and #PAD_START
+	beq :+
+		lda #$08
+		sta temp 
+		lda #$00
+		sta timer 
+		sta nmi_mask 
+		lda #GAME_RUNNING 
+		sta gameState 
+	:
 	rts 
 
 FLOATING_FACE_L=$01
