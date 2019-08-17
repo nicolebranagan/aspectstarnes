@@ -19,6 +19,10 @@ title_palette:
 
 PRESS_START:
 .asciiz "PRESS START BUTTON"
+COPYRIGHT:
+.asciiz "COPYRIGHT 2019"
+NICOLE_EXPRESS:
+.asciiz "NICOLE EXPRESS"
 
 .segment "CODE"
 title_init:
@@ -33,7 +37,31 @@ title_init:
 		bcc :-
     jsr clear_nametable
     jsr draw_title
+
+    lda #<PRESS_START
+    sta pointer
+    lda #>PRESS_START
+    sta pointer+1 
+    ldx #$07
+    ldy #$15
     jsr write_text_at_x_y
+
+    lda #<COPYRIGHT
+    sta pointer
+    lda #>COPYRIGHT
+    sta pointer+1 
+    ldx #$09
+    ldy #$18
+    jsr write_text_at_x_y
+
+    lda #<NICOLE_EXPRESS
+    sta pointer
+    lda #>NICOLE_EXPRESS
+    sta pointer+1 
+    ldx #$09
+    ldy #$19
+    jsr write_text_at_x_y
+
     lda #GAME_TITLE
     sta gameState
     rts 
@@ -87,6 +115,7 @@ write_text_at_x_y:
         lda (pointer),Y
         beq :+
         sta $2007
+        iny 
         bne :-
     :
     rts 
