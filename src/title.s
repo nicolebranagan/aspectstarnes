@@ -1,5 +1,6 @@
-.importzp nmi_ready, PAD_START, gamepad, GAME_TITLE, gameState, nmi_count, aspect
-.import palette, clear_nametable, ppu_address_tile, gamepad_poll, game_init, oam
+.importzp nmi_ready, PAD_START, gamepad, GAME_TITLE, gameState, nmi_count, aspect, facing, moving, xpos, ypos
+.importzp FACING_LEFT
+.import palette, clear_nametable, ppu_address_tile, gamepad_poll, game_init, oam, draw_friend
 
 .export title_init, title_update
 
@@ -35,13 +36,6 @@ title_init:
     lda #$00
 	sta $2001
     ldx #0
-    :; clear sprites
-        sta oam, X
-        inx
-        inx
-        inx
-        inx
-        bne :-
 	:; store palettes in palette
 		lda title_palette, X
 		sta palette, X
@@ -80,6 +74,13 @@ title_init:
 
     lda #$01
     sta aspect
+    lda #$60
+    sta xpos 
+    sta ypos 
+    lda #FACING_LEFT
+    sta facing 
+    lda #$01
+    sta moving
     lda #GAME_TITLE
     sta gameState
     rts 
@@ -206,6 +207,8 @@ title_update:
     beq :+
         jsr game_init
     :
+    jsr draw_friend
+    dec xpos
     lda #$01
 	sta	nmi_ready
     rts 

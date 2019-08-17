@@ -1,8 +1,8 @@
 .importzp PAD_A, PAD_B, PAD_SELECT, PAD_START, PAD_U, PAD_D, PAD_L, PAD_R, gamepad, nmi_ready, nmi_count, gameState, GAME_INIT, GAME_RUNNING, GAME_DEAD, GAME_PAUSE, nmi_mask
 .import palette, bullet_init, enemy_init, gamepad_poll, oam, bullet_fire, bullet_draw, bullet_update, enemy_init, enemy_draw, enemy_update, ppu_address_tile, title_update
 
-.exportzp aspect, xpos, ypos, facing, FACING_DOWN, FACING_LEFT, FACING_RIGHT, FACING_UP, current_tile
-.export is_solid, get_map_tile_for_x_y, map_attributes, game_init, game_update, clear_nametable
+.exportzp aspect, xpos, ypos, facing, FACING_DOWN, FACING_LEFT, FACING_RIGHT, FACING_UP, current_tile, moving
+.export is_solid, get_map_tile_for_x_y, map_attributes, game_init, game_update, clear_nametable, draw_friend
 
 .segment "ZEROPAGE"
 xpos:			.res 1
