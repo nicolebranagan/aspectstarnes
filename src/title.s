@@ -1,12 +1,14 @@
 .importzp nmi_ready, PAD_START, gamepad, GAME_TITLE, gameState, nmi_count, aspect, facing, moving, xpos, ypos
-.importzp FACING_LEFT
-.import palette, clear_nametable, ppu_address_tile, gamepad_poll, game_init, oam, draw_friend
+.importzp FACING_LEFT, FACING_RIGHT
+.importzp enemy_x, enemy_y, enemy_asp, enemy_face, enemy_attr
+.import palette, clear_nametable, ppu_address_tile, gamepad_poll, game_init, oam, draw_friend, enemy_draw
 
 .export title_init, title_update
 
 .segment "ZEROPAGE"
 pointer:    .res 2
 temp:       .res 1
+timer:      .res 1
 
 .segment "RODATA"
 title_palette:
@@ -74,13 +76,16 @@ title_init:
 
     lda #$01
     sta aspect
-    lda #$60
+    lda #$70
     sta xpos 
     sta ypos 
     lda #FACING_LEFT
     sta facing 
     lda #$01
     sta moving
+    jsr init_enemy
+    lda #$00
+    sta timer
     lda #GAME_TITLE
     sta gameState
     rts 
@@ -185,8 +190,9 @@ write_attributes:
     rts
 
 title_update:
-    lda nmi_count
-    cmp #255
+    inc timer
+    lda timer
+    cmp #200
     bne @done
         inc aspect 
         lda aspect 
@@ -195,11 +201,32 @@ title_update:
             lda #$01
             sta aspect
         :
+        dec enemy_asp 
+        lda enemy_asp
+        cmp #$00
+        bne :+
+            lda #$03
+            sta enemy_asp
+        :
+        lda enemy_asp 
+        cmp aspect 
+        bne :+
+            lda #FACING_RIGHT
+            sta enemy_face 
+            sta facing
+            jmp :++
+        :
+            lda #FACING_LEFT
+            sta enemy_face 
+            sta facing
+        :
         ldx aspect 
         lda aspect_pal1,X 
         sta palette+6
         lda aspect_pal2,X 
         sta palette+7 
+        lda #$00
+        sta timer
     @done:
     jsr gamepad_poll
     lda gamepad 
@@ -208,7 +235,39 @@ title_update:
         jsr game_init
     :
     jsr draw_friend
-    dec xpos
+    jsr enemy_draw
+    lda enemy_asp
+    cmp aspect 
+    bne :+
+        inc xpos
+        inc enemy_x
+        jmp :++
+    :
+        dec xpos
+        dec enemy_x
+    :
     lda #$01
 	sta	nmi_ready
+    rts 
+
+init_enemy:
+    ldx #$00
+    :
+        lda #$FF
+        sta enemy_y,X ; Store 255 in the y position
+        lda #$00
+        sta enemy_face,X 
+        lda #$00
+        sta enemy_attr,X 
+        inx 
+        cpx #$08
+        bne :-
+    lda #$02
+    sta enemy_asp 
+    lda #$70 
+    sta enemy_y 
+    lda #$B0
+    sta enemy_x 
+    lda #FACING_LEFT
+    sta enemy_face
     rts 
