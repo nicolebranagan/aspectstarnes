@@ -54,6 +54,8 @@ MAP_HEIGHT=$0F
 
 .segment "CODE"
 game_init:
+	lda #$00
+	sta $2001
     ldx #0
 	:; store level palettes in palette
 		lda level_palette, X
@@ -377,8 +379,6 @@ is_solid:	; sets carry flag if x, y is solid
 	rts 
 
 dead_update:
-	lda #$00
-	sta $2001
 	jsr game_init
 	lda #$01
 	sta	nmi_ready	
