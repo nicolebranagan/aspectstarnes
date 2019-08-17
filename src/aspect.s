@@ -3,9 +3,9 @@
 ;
 
 .importzp nmi_ready, nmi_mask
-.import game_init, game_update, nmi, oam
+.import game_init, game_update, nmi, oam, title_init
 
-.exportzp gameState, GAME_RUNNING, GAME_INIT, GAME_DEAD, GAME_PAUSE
+.exportzp gameState, GAME_RUNNING, GAME_INIT, GAME_DEAD, GAME_PAUSE, GAME_TITLE
 .export frame, ppu_address_tile
 
 .segment "ZEROPAGE"
@@ -16,6 +16,7 @@ GAME_RUNNING=$00
 GAME_INIT=$01
 GAME_DEAD=$02
 GAME_PAUSE=$03
+GAME_TITLE=$04
 
 ;
 ; iNES header
@@ -114,7 +115,7 @@ reset:
 main:
 	lda #$00
 	sta nmi_mask
-	jsr game_init
+	jsr title_init
 	lda #$01
 	sta	nmi_ready	
 	:
