@@ -53,7 +53,7 @@ title_init:
     lda #>PRESS_START
     sta pointer+1 
     ldx #$07
-    ldy #$15
+    ldy #TOP_Y+$11
     jsr write_text_at_x_y
 
     lda #<COPYRIGHT
@@ -61,7 +61,7 @@ title_init:
     lda #>COPYRIGHT
     sta pointer+1 
     ldx #$09
-    ldy #$18
+    ldy #TOP_Y+$14
     jsr write_text_at_x_y
 
     lda #<NICOLE_EXPRESS
@@ -69,7 +69,7 @@ title_init:
     lda #>NICOLE_EXPRESS
     sta pointer+1 
     ldx #$09
-    ldy #$19
+    ldy #TOP_Y+$15
     jsr write_text_at_x_y
 
     jsr write_attributes
@@ -90,7 +90,7 @@ title_init:
     sta gameState
     rts 
 
-TOP_Y = $04
+TOP_Y = $44
 TOP_X = $09
 draw_title:
     ldy #TOP_Y ; starting row
@@ -176,7 +176,7 @@ write_text_at_x_y:
 
 write_attributes:
 	lda $2002 ; reset latch
-	lda	#$23
+	lda	#$2b
 	sta	$2006
 	lda	#$d0
 	sta	$2006
