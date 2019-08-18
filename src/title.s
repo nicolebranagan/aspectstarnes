@@ -1,5 +1,5 @@
 .importzp nmi_ready, PAD_START, gamepad, GAME_TITLE, gameState, nmi_count, nmi_scroll, aspect, facing, moving, xpos, ypos
-.importzp FACING_LEFT, FACING_RIGHT
+.importzp FACING_LEFT, FACING_RIGHT, last_gamepad
 .importzp enemy_x, enemy_y, enemy_asp, enemy_face, enemy_attr
 .import palette, clear_nametable, ppu_address_tile, gamepad_poll, game_init, oam, draw_friend, enemy_draw
 
@@ -290,6 +290,9 @@ chase_update:
     lda gamepad 
     and #PAD_START
     beq :+
+        lda last_gamepad ; get the gamepad only on the rising edge
+        and #PAD_START
+        bne :+
         jsr game_init
     :
     jsr draw_friend
@@ -324,7 +327,7 @@ init_train:
     sta enemy_asp 
     lda #$5b 
     sta enemy_y 
-    lda #$00
+    lda #$08
     sta enemy_x 
     lda #$03
     sta enemy_attr

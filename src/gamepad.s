@@ -3,7 +3,7 @@
 ;
 
 .exportzp PAD_A, PAD_B, PAD_SELECT, PAD_START, PAD_U, PAD_D, PAD_L, PAD_R, gamepad
-.export gamepad_poll
+.export gamepad_poll, last_gamepad
 
 PAD_A      = $01
 PAD_B      = $02
@@ -15,7 +15,8 @@ PAD_L      = $40
 PAD_R      = $80
 
 .segment "ZEROPAGE"
-gamepad: .res 1
+gamepad: 		.res 1
+last_gamepad:	.res 1
 
 .segment "CODE"
 ; gamepad_poll: this reads the gamepad state into the variable labelled "gamepad"
@@ -23,6 +24,8 @@ gamepad: .res 1
 ;   conflict with gamepad reading, which may give incorrect results.
 gamepad_poll:
 	; strobe the gamepad to latch current button state
+	lda gamepad 
+	sta last_gamepad
 	lda #1
 	sta $4016
 	lda #0
