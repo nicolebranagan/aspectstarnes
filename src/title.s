@@ -101,7 +101,7 @@ draw_title:
         sta $2007
         clc 
         adc #$01
-        cmp #$ce
+        cmp #$cf
         bne :-
     iny 
     jsr ppu_address_tile
@@ -146,7 +146,7 @@ draw_grid:
             lda temp
             and #%00000001
             beq :+
-                lda #$ce
+                lda #$df
                 bne :++
             :
                 lda #$cf
