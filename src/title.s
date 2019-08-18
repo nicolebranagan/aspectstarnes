@@ -45,6 +45,7 @@ title_init:
 		cpx #32
 		bcc :-
     jsr clear_nametable
+    jsr write_logo
     jsr draw_title
     jsr draw_grid
 
@@ -89,6 +90,26 @@ title_init:
     lda #GAME_TITLE
     sta gameState
     rts 
+
+LOGO_Y = $0c
+LOGO_X = $0a
+write_logo:
+    ldy #LOGO_Y
+    ldx #LOGO_X
+    jsr ppu_address_tile
+    lda #$B0
+    :
+        sta $2007
+        clc 
+        adc #$01
+        cmp #$bb
+        bne :-
+    ldy #LOGO_Y+1
+    ldx #LOGO_X+6
+    jsr ppu_address_tile
+    lda #$de 
+    sta $2007
+    rts
 
 TOP_Y = $44
 TOP_X = $09
