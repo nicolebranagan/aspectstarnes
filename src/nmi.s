@@ -3,7 +3,7 @@
 ;
 
 .export palette, nmi, oam
-.exportzp nmi_ready, nmi_count, nmi_mask 
+.exportzp nmi_ready, nmi_count, nmi_mask, nmi_scroll
 
 .import frame
 
@@ -12,6 +12,7 @@ nmi_lock:       .res 1 ; prevents NMI re-entry
 nmi_count:      .res 1 ; is incremented every NMI
 nmi_ready:      .res 1 ; set to 1 to push a PPU frame update, 2 to turn rendering off next NMI
 nmi_mask:		.res 1 ; allows setting attribute bits 
+nmi_scroll:		.res 1 ; allows scrolling
 
 .segment "BSS"
 palette:    .res 32  ; palette buffer for PPU update
@@ -72,7 +73,7 @@ nmi:
 	lda $2000
 	lda #$00
 	sta $2005
-	lda #$00
+	lda nmi_scroll
 	sta $2005
 	lda #%10001000
 	sta $2000 ; set horizontal nametable increment

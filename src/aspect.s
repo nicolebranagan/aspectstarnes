@@ -2,7 +2,7 @@
 ;
 ;
 
-.importzp nmi_ready, nmi_mask
+.importzp nmi_ready, nmi_mask, nmi_scroll
 .import game_init, game_update, nmi, oam, title_init
 
 .exportzp gameState, GAME_RUNNING, GAME_INIT, GAME_DEAD, GAME_PAUSE, GAME_TITLE
@@ -115,6 +115,7 @@ reset:
 main:
 	lda #$00
 	sta nmi_mask
+	sta nmi_scroll
 	jsr title_init
 	lda #$01
 	sta	nmi_ready	

@@ -1,4 +1,4 @@
-.importzp nmi_ready, PAD_START, gamepad, GAME_TITLE, gameState, nmi_count, aspect, facing, moving, xpos, ypos
+.importzp nmi_ready, PAD_START, gamepad, GAME_TITLE, gameState, nmi_count, nmi_scroll, aspect, facing, moving, xpos, ypos
 .importzp FACING_LEFT, FACING_RIGHT
 .importzp enemy_x, enemy_y, enemy_asp, enemy_face, enemy_attr
 .import palette, clear_nametable, ppu_address_tile, gamepad_poll, game_init, oam, draw_friend, enemy_draw
@@ -9,6 +9,11 @@
 pointer:    .res 2
 temp:       .res 1
 timer:      .res 1
+titlePhase:	.res 1
+
+TRAIN_PHASE=$00
+SCROLL_PHASE=$01
+CHASE_PHASE=$02
 
 .segment "RODATA"
 title_palette:
@@ -16,7 +21,7 @@ title_palette:
 .byte $0F,$0F,$03,$02 ; bg1 
 .byte $0F,$04,$19,$09 ; bg2 
 .byte $0F,$04,$15,$06 ; bg3 
-.byte $0F,$0F,$26,$37 ; sp0 
+.byte $0F,$24,$2c,$30 ; sp0 
 .byte $0F,$0c,$11,$31 ; sp1 
 .byte $0F,$0b,$1a,$3a ; sp2 
 .byte $0F,$07,$16,$36 ; sp3 
@@ -72,19 +77,9 @@ title_init:
     ldx #$09
     ldy #TOP_Y+$15
     jsr write_text_at_x_y
-
     jsr write_attributes
 
-    lda #$01
-    sta aspect
-    lda #$70
-    sta xpos 
-    sta ypos 
-    lda #FACING_LEFT
-    sta facing 
-    lda #$01
-    sta moving
-    jsr init_enemy
+    jsr init_train
     lda #$00
     sta timer
     lda #GAME_TITLE
@@ -210,7 +205,49 @@ write_attributes:
 		bcc :-
     rts
 
-title_update:
+.segment "RODATA"
+titleUpdate:
+	.word train_update, scroll_update, chase_update
+
+.segment "CODE"
+title_update: 
+	lda titlePhase  
+	asl
+	tax
+	lda titleUpdate+1,X 
+	sta pointer+1 
+	lda titleUpdate,X 
+	sta pointer
+	jmp (pointer)
+
+train_update:
+    jsr enemy_draw
+    inc enemy_x 
+    bne :+
+        jsr init_scroll
+    :
+    jsr gamepad_poll
+    lda gamepad 
+    and #PAD_START
+    beq :+
+        jsr init_chase
+    :
+    lda #$01
+	sta	nmi_ready
+    rts 
+
+scroll_update:
+    inc nmi_scroll
+    lda nmi_scroll
+    cmp #$ef
+    bne :+
+        jsr init_chase
+    :
+    lda #$01
+	sta	nmi_ready
+    rts 
+
+chase_update:
     inc timer
     lda timer
     cmp #200
@@ -271,7 +308,7 @@ title_update:
 	sta	nmi_ready
     rts 
 
-init_enemy:
+init_train:
     ldx #$00
     :
         lda #$FF
@@ -283,6 +320,50 @@ init_enemy:
         inx 
         cpx #$08
         bne :-
+    lda #$00
+    sta enemy_asp 
+    lda #$5b 
+    sta enemy_y 
+    lda #$00
+    sta enemy_x 
+    lda #$03
+    sta enemy_attr
+    lda #FACING_LEFT
+    sta enemy_face
+    lda #TRAIN_PHASE
+    sta titlePhase
+    rts 
+
+init_scroll:
+    lda #$ff 
+    sta enemy_y
+    jsr enemy_draw
+    lda #SCROLL_PHASE
+    sta titlePhase
+    rts 
+
+init_chase:
+    lda #$ef 
+    sta nmi_scroll
+    lda #$00
+    sta timer
+    lda #$0F
+    sta palette+17
+    lda #$26 
+    sta palette+18
+    lda #$37
+    sta palette+19
+    lda #$01
+    sta aspect
+    lda #$70
+    sta xpos 
+    sta ypos 
+    lda #FACING_LEFT
+    sta facing 
+    lda #$01
+    sta moving
+    lda #$00
+    sta enemy_attr 
     lda #$02
     sta enemy_asp 
     lda #$70 
@@ -291,4 +372,6 @@ init_enemy:
     sta enemy_x 
     lda #FACING_LEFT
     sta enemy_face
+    lda #CHASE_PHASE
+    sta titlePhase
     rts 

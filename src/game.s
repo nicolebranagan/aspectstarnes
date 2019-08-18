@@ -1,4 +1,4 @@
-.importzp PAD_A, PAD_B, PAD_SELECT, PAD_START, PAD_U, PAD_D, PAD_L, PAD_R, gamepad, nmi_ready, nmi_count, gameState, GAME_INIT, GAME_RUNNING, GAME_DEAD, GAME_PAUSE, nmi_mask
+.importzp PAD_A, PAD_B, PAD_SELECT, PAD_START, PAD_U, PAD_D, PAD_L, PAD_R, gamepad, nmi_ready, nmi_count, gameState, GAME_INIT, GAME_RUNNING, GAME_DEAD, GAME_PAUSE, nmi_mask, nmi_scroll
 .import palette, bullet_init, enemy_init, gamepad_poll, oam, bullet_fire, bullet_draw, bullet_update, enemy_init, enemy_draw, enemy_update, ppu_address_tile, title_update
 
 .exportzp aspect, xpos, ypos, facing, FACING_DOWN, FACING_LEFT, FACING_RIGHT, FACING_UP, current_tile, moving
@@ -108,6 +108,8 @@ game_update:
 init_update:
 	lda #%00000001
 	sta nmi_mask
+	lda #$00
+	sta nmi_scroll
 	inc timer
 	lda timer 
 	cmp #$10
