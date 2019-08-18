@@ -407,14 +407,18 @@ enemy_sprites:
     .byte $24, $25, $26, $27
     .byte $28, $29, $2a, $2b
     .byte $2c, $2d, $2e, $2f
-    .byte $20, $21, $22, $23 ; bird
-    .byte $24, $25, $26, $27
-    .byte $28, $29, $2a, $2b
-    .byte $2c, $2d, $2e, $2f
+    .byte $30, $31, $32, $33 ; bird
+    .byte $34, $35, $36, $37
+    .byte $38, $39, $3a, $3b
+    .byte $3c, $3d, $3e, $3f
     .byte $20, $21, $22, $23 ; dog
     .byte $24, $25, $26, $27
     .byte $28, $29, $2a, $2b
     .byte $2c, $2d, $2e, $2f
+    .byte $20, $21, $22, $23 ; train
+    .byte $24, $25, $26, $27
+    .byte $58, $59, $5a, $5b
+    .byte $5c, $5d, $5e, $5f
     .byte $e0, $e1, $e2, $e3 ; explosion  frames
     .byte $e4, $e5, $e6, $e7
     .byte $e8, $e9, $ea, $eb 
@@ -434,7 +438,7 @@ draw_single_enemy:
     bne :+
         lda enemy_attr,X 
         clc 
-        adc #$0C
+        adc #$10
         sta frame 
         lda #$00
         sta flipped 
@@ -477,6 +481,13 @@ draw_single_enemy:
         sbc #$02
         sta flipped 
     :
+    ; choose enemy type
+    lda enemy_attr,X 
+    asl 
+    asl 
+    clc 
+    adc frame
+    sta frame
 
     @got_frame_and_flipped:
     ; aspect icon

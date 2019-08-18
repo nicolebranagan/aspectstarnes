@@ -91,7 +91,7 @@ title_init:
     sta gameState
     rts 
 
-LOGO_Y = $0c
+LOGO_Y = $0d
 LOGO_X = $0a
 write_logo:
     ldy #LOGO_Y
