@@ -1,9 +1,9 @@
 .importzp nmi_ready, PAD_START, gamepad, GAME_TITLE, gameState, nmi_count, nmi_scroll, aspect, facing, moving, xpos, ypos
 .importzp FACING_LEFT, FACING_RIGHT, last_gamepad
-.importzp enemy_x, enemy_y, enemy_asp, enemy_face, enemy_attr
-.import palette, clear_nametable, ppu_address_tile, gamepad_poll, game_init, oam, draw_friend, enemy_draw
+.importzp enemy_x, enemy_y, enemy_asp, enemy_face, enemy_attr, lives
+.import palette, clear_nametable, ppu_address_tile, gamepad_poll, game_preload, oam, draw_friend, enemy_draw, game_init
 
-.export title_init, title_update
+.export title_init, title_update, write_text_at_x_y, pointer 
 
 .segment "ZEROPAGE"
 pointer:    .res 2
@@ -176,7 +176,6 @@ draw_grid:
         cpy #TOP_Y+5+10
         bne @yLoop
     rts
-    
 
 write_text_at_x_y:
     jsr ppu_address_tile
@@ -293,7 +292,10 @@ chase_update:
         lda last_gamepad ; get the gamepad only on the rising edge
         and #PAD_START
         bne :+
-        jsr game_init
+        lda #$03
+        sta lives
+        lda #$00
+        jmp game_preload
     :
     jsr draw_friend
     jsr enemy_draw

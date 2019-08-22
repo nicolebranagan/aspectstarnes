@@ -1,8 +1,8 @@
-.importzp PAD_A, PAD_B, PAD_SELECT, PAD_START, PAD_U, PAD_D, PAD_L, PAD_R, gamepad, nmi_ready, nmi_count, gameState, GAME_INIT, GAME_RUNNING, GAME_DEAD, GAME_PAUSE, nmi_mask, nmi_scroll
-.import palette, bullet_init, enemy_init, gamepad_poll, oam, bullet_fire, bullet_draw, bullet_update, enemy_init, enemy_draw, enemy_update, ppu_address_tile, title_update
+.importzp PAD_A, PAD_B, PAD_SELECT, PAD_START, PAD_U, PAD_D, PAD_L, PAD_R, gamepad, nmi_ready, nmi_count, gameState, GAME_INIT, GAME_RUNNING, GAME_PAUSE, nmi_mask, nmi_scroll, GAME_PRELEVEL, pointer
+.import palette, bullet_init, enemy_init, gamepad_poll, oam, bullet_fire, bullet_draw, bullet_update, enemy_init, enemy_draw, enemy_update, ppu_address_tile, title_update, write_text_at_x_y 
 
-.exportzp aspect, xpos, ypos, facing, FACING_DOWN, FACING_LEFT, FACING_RIGHT, FACING_UP, current_tile, moving
-.export is_solid, get_map_tile_for_x_y, map_attributes, game_init, game_update, clear_nametable, draw_friend
+.exportzp aspect, xpos, ypos, facing, FACING_DOWN, FACING_LEFT, FACING_RIGHT, FACING_UP, current_tile, moving, lives
+.export is_solid, get_map_tile_for_x_y, map_attributes, game_init, game_update, clear_nametable, draw_friend, game_preload
 
 .segment "ZEROPAGE"
 xpos:			.res 1
@@ -13,11 +13,19 @@ moving:			.res 1
 temp:			.res 1
 current_tile:	.res 1
 timer:			.res 1
+currentLevel:	.res 1
+lives:			.res 1
 
 .segment "BSS"
-pointer:		.res 2
+gamePointer:		.res 2
 
 .segment "RODATA"
+ROUND:
+.asciiz "LEVEL "
+LIFE_COUNT:
+.asciiz "   X "
+text_palette:
+.byte $0F,$30,$16,$00 ; bg0 title text
 level_palette:
 .byte $0F,$00,$10,$01 ; bg0 bricks
 .byte $0F,$04,$12,$01 ; bg1 floor, aspect plus
@@ -81,6 +89,67 @@ game_init:
 	sta timer 
     rts 
 
+game_preload:
+	sta currentLevel
+	lda #$00
+	sta $2001
+	sta nmi_scroll
+	ldx #0
+	: ; clear sprites
+		sta oam, X
+		inx
+		inx
+		inx
+		inx
+		bne :-
+	ldx #$00
+	:
+		lda text_palette,X 
+		sta palette,X 
+		inx 
+		cpx #$04
+		bne :-
+	jsr clear_nametable
+
+	lda #<ROUND
+	sta pointer 
+	lda #>ROUND
+	sta pointer+1
+	ldx #$0D
+	ldy #$0B
+	jsr write_text_at_x_y
+	lda currentLevel 
+	clc 
+	adc #$31
+	sta $2007
+
+	lda #<LIFE_COUNT
+	sta pointer 
+	lda #>LIFE_COUNT
+	sta pointer+1
+	ldx #$0D
+	ldy #$0E
+	jsr write_text_at_x_y
+	lda lives 
+	clc 
+	adc #$31
+	sta $2007
+
+	lda #GAME_PRELEVEL
+	sta gameState
+	lda #$00
+	sta facing  
+	lda #$72
+	sta ypos  
+	lda #$74
+	sta xpos
+	lda #$01
+	sta aspect 
+	sta moving
+	sta nmi_ready 
+	lda #$AF
+	sta timer
+	rts	
 ;
 ;	frame
 ;
@@ -92,7 +161,7 @@ FACING_RIGHT=$03
 
 .segment "RODATA"
 gameUpdate:
-	.word running_update, init_update, dead_update, pause_update, title_update
+	.word running_update, init_update, dead_update, pause_update, title_update, preload_update
 
 .segment "CODE"
 game_update: 
@@ -100,10 +169,10 @@ game_update:
 	asl
 	tax
 	lda gameUpdate+1,X 
-	sta pointer+1 
+	sta gamePointer+1 
 	lda gameUpdate,X 
-	sta pointer
-	jmp (pointer)
+	sta gamePointer
+	jmp (gamePointer)
 
 init_update:
 	lda #%00000001
@@ -381,7 +450,9 @@ is_solid:	; sets carry flag if x, y is solid
 	rts 
 
 dead_update:
-	jsr game_init
+	dec lives 
+	lda currentLevel 
+	jmp game_preload
 	lda #$01
 	sta	nmi_ready	
 	rts 
@@ -433,6 +504,15 @@ pause_update:
 	lda #$01
 	sta	nmi_ready
 	rts 
+
+preload_update:
+	dec timer 
+	bne :+
+		jsr game_init
+	:
+	jsr draw_friend
+	lda #$01
+	sta nmi_ready 
 
 FLOATING_FACE_L=$01
 FLOATING_FACE_R=$02

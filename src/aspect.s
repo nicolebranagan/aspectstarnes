@@ -3,9 +3,9 @@
 ;
 
 .importzp nmi_ready, nmi_mask, nmi_scroll
-.import game_init, game_update, nmi, oam, title_init
+.import game_update, nmi, oam, title_init
 
-.exportzp gameState, GAME_RUNNING, GAME_INIT, GAME_DEAD, GAME_PAUSE, GAME_TITLE
+.exportzp gameState, GAME_RUNNING, GAME_INIT, GAME_DEAD, GAME_PAUSE, GAME_TITLE, GAME_PRELEVEL
 .export frame, ppu_address_tile
 
 .segment "ZEROPAGE"
@@ -17,6 +17,7 @@ GAME_INIT=$01
 GAME_DEAD=$02
 GAME_PAUSE=$03
 GAME_TITLE=$04
+GAME_PRELEVEL=$05
 
 ;
 ; iNES header
