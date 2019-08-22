@@ -1,5 +1,5 @@
 .importzp nmi_ready, PAD_START, gamepad, GAME_TITLE, gameState, nmi_count, nmi_scroll, aspect, facing, moving, xpos, ypos
-.importzp FACING_LEFT, FACING_RIGHT, last_gamepad
+.importzp FACING_LEFT, FACING_RIGHT, last_gamepad, nmi_mask
 .importzp enemy_x, enemy_y, enemy_asp, enemy_face, enemy_attr, lives
 .import palette, clear_nametable, ppu_address_tile, gamepad_poll, game_preload, oam, draw_friend, enemy_draw, game_init
 
@@ -42,6 +42,7 @@ NICOLE_EXPRESS:
 title_init:
     lda #$00
 	sta $2001
+    sta nmi_mask
     ldx #0
 	:; store palettes in palette
 		lda title_palette, X

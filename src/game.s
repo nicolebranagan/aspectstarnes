@@ -1,8 +1,8 @@
-.importzp PAD_A, PAD_B, PAD_SELECT, PAD_START, PAD_U, PAD_D, PAD_L, PAD_R, gamepad, nmi_ready, nmi_count, gameState, GAME_INIT, GAME_RUNNING, GAME_PAUSE, nmi_mask, nmi_scroll, GAME_PRELEVEL, pointer
-.import palette, bullet_init, enemy_init, gamepad_poll, oam, bullet_fire, bullet_draw, bullet_update, enemy_init, enemy_draw, enemy_update, ppu_address_tile, title_update, write_text_at_x_y 
+.importzp PAD_A, PAD_B, PAD_SELECT, PAD_START, PAD_U, PAD_D, PAD_L, PAD_R, gamepad, nmi_ready, nmi_count, gameState, GAME_INIT, GAME_RUNNING, GAME_PAUSE, GAME_DEAD, nmi_mask, nmi_scroll, GAME_PRELEVEL, pointer
+.import palette, bullet_init, enemy_init, gamepad_poll, oam, bullet_fire, bullet_draw, bullet_update, enemy_init, enemy_draw, enemy_update, ppu_address_tile, title_update, write_text_at_x_y, title_init
 
 .exportzp aspect, xpos, ypos, facing, FACING_DOWN, FACING_LEFT, FACING_RIGHT, FACING_UP, current_tile, moving, lives
-.export is_solid, get_map_tile_for_x_y, map_attributes, game_init, game_update, clear_nametable, draw_friend, game_preload
+.export is_solid, get_map_tile_for_x_y, map_attributes, game_init, game_update, clear_nametable, draw_friend, game_preload, game_die
 
 .segment "ZEROPAGE"
 xpos:			.res 1
@@ -94,6 +94,7 @@ game_preload:
 	lda #$00
 	sta $2001
 	sta nmi_scroll
+	sta nmi_mask
 	ldx #0
 	: ; clear sprites
 		sta oam, X
@@ -132,7 +133,7 @@ game_preload:
 	jsr write_text_at_x_y
 	lda lives 
 	clc 
-	adc #$31
+	adc #$30
 	sta $2007
 
 	lda #GAME_PRELEVEL
@@ -150,6 +151,28 @@ game_preload:
 	lda #$AF
 	sta timer
 	rts	
+
+game_die:
+	dec lives 
+	lda #GAME_DEAD
+	sta gameState 
+	lda #%11100000
+	sta nmi_mask
+	ldx #0
+	lda #$FF
+	: ; clear sprites
+		sta oam, X
+		inx
+		inx
+		inx
+		inx
+		bne :-
+	lda #$00
+	sta timer 
+	sta ypos
+	jsr draw_friend
+	rts 
+
 ;
 ;	frame
 ;
@@ -450,9 +473,24 @@ is_solid:	; sets carry flag if x, y is solid
 	rts 
 
 dead_update:
-	dec lives 
-	lda currentLevel 
-	jmp game_preload
+	lda #$00
+	sta nmi_scroll
+	inc timer
+	lda timer 
+	cmp #$50
+	bne :+
+		jsr title_init
+	:
+	lda timer 
+	cmp #$20
+	bne :+
+		lda #%11100001
+		sta nmi_mask
+		lda lives
+		beq :+
+			lda #$00
+			jmp game_preload
+	:
 	lda #$01
 	sta	nmi_ready	
 	rts 
