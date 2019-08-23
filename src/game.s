@@ -1,5 +1,5 @@
-.importzp PAD_A, PAD_B, PAD_SELECT, PAD_START, PAD_U, PAD_D, PAD_L, PAD_R, gamepad, nmi_ready, nmi_count, gameState, GAME_INIT, GAME_RUNNING, GAME_PAUSE, GAME_DEAD, nmi_mask, nmi_scroll, GAME_PRELEVEL, pointer
-.import palette, bullet_init, enemy_init, gamepad_poll, oam, bullet_fire, bullet_draw, bullet_update, enemy_init, enemy_draw, enemy_update, ppu_address_tile, title_update, write_text_at_x_y, title_init
+.importzp PAD_A, PAD_B, PAD_SELECT, PAD_START, PAD_U, PAD_D, PAD_L, PAD_R, gamepad, nmi_ready, nmi_count, gameState, GAME_INIT, GAME_RUNNING, GAME_PAUSE, GAME_DEAD, nmi_mask, nmi_scroll, GAME_PRELEVEL, pointer, GAME_WIN
+.import palette, bullet_init, enemy_init, gamepad_poll, oam, bullet_fire, bullet_draw, bullet_update, enemy_init, enemy_draw, enemy_update, ppu_address_tile, title_update, write_text_at_x_y, title_init, no_enemy_left
 
 .exportzp aspect, xpos, ypos, facing, FACING_DOWN, FACING_LEFT, FACING_RIGHT, FACING_UP, current_tile, moving, lives
 .export is_solid, get_map_tile_for_x_y, map_attributes, game_update, clear_nametable, draw_friend, game_preload, game_die
@@ -201,7 +201,7 @@ FACING_RIGHT=$03
 
 .segment "RODATA"
 gameUpdate:
-	.word running_update, init_update, dead_update, pause_update, title_update, preload_update
+	.word running_update, init_update, dead_update, pause_update, title_update, preload_update, win_update
 
 .segment "CODE"
 game_update: 
@@ -258,6 +258,17 @@ running_update:
 	jsr check_player_aspect
 	jsr bullet_update
 	jsr enemy_update
+	lda gameState 
+	cmp #GAME_DEAD 
+	bne :+
+		jmp @done
+	: 
+	jsr no_enemy_left
+	bcc :+
+		lda #GAME_WIN
+		sta gameState 
+		jmp @done
+	:
 	jsr gamepad_poll	; read gamepad
 	lda gamepad
 	and #PAD_A
@@ -505,7 +516,7 @@ dead_update:
 		sta nmi_mask
 		lda lives
 		beq :+
-			lda #$00
+			lda currentLevel
 			jmp game_preload
 	:
 	lda #$01
@@ -568,6 +579,14 @@ preload_update:
 	jsr draw_friend
 	lda #$01
 	sta nmi_ready 
+	rts 
+
+win_update:
+	inc currentLevel 
+	lda currentLevel
+	jsr game_preload
+	lda #$01 
+	sta nmi_ready
 
 FLOATING_FACE_L=$01
 FLOATING_FACE_R=$02

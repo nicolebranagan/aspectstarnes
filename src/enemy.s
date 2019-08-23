@@ -1,6 +1,6 @@
 .importzp nmi_count, FACING_DOWN, FACING_UP, FACING_LEFT, FACING_RIGHT, xpos, ypos, aspect, current_tile, bullety, bulletx, bulletasp, gameState, GAME_DEAD
 .import oam, is_solid, get_map_tile_for_x_y, map_attributes, game_die
-.export enemy_draw, enemy_init, enemy_update, enemy_x, enemy_y, enemy_asp, enemy_face, enemy_attr
+.export enemy_draw, enemy_init, enemy_update, enemy_x, enemy_y, enemy_asp, enemy_face, enemy_attr, no_enemy_left
 
 .segment "ZEROPAGE"
 enemy_x:    .res 8
@@ -386,6 +386,21 @@ enemy_enemy_collision:
         inx 
         cpy #$07 
         bne innerLoop 
+    rts 
+
+no_enemy_left:
+    ldx #$00
+    :
+        lda enemy_y,X 
+        cmp #$FF 
+        bne @enemydead
+        inx 
+        cpx #$08
+        bne :-
+    sec 
+    rts 
+    @enemydead:
+    clc 
     rts 
 
 enemy_draw:
