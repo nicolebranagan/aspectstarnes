@@ -2,7 +2,7 @@
 .import palette, bullet_init, enemy_init, gamepad_poll, oam, bullet_fire, bullet_draw, bullet_update, enemy_init, enemy_draw, enemy_update, ppu_address_tile, title_update, write_text_at_x_y, title_init
 
 .exportzp aspect, xpos, ypos, facing, FACING_DOWN, FACING_LEFT, FACING_RIGHT, FACING_UP, current_tile, moving, lives
-.export is_solid, get_map_tile_for_x_y, map_attributes, game_init, game_update, clear_nametable, draw_friend, game_preload, game_die
+.export is_solid, get_map_tile_for_x_y, map_attributes, game_update, clear_nametable, draw_friend, game_preload, game_die
 
 .segment "ZEROPAGE"
 xpos:			.res 1
@@ -17,7 +17,8 @@ currentLevel:	.res 1
 lives:			.res 1
 
 .segment "BSS"
-gamePointer:		.res 2
+gamePointer:	.res 2
+map:			.res 240
 
 .segment "RODATA"
 ROUND:
@@ -36,7 +37,10 @@ level_palette:
 .byte $0F,$0b,$1a,$3a ; sp2 aspect x
 .byte $0F,$07,$16,$36 ; sp3 aspect circle
 
-test_map:
+levels:
+.word level1
+
+level1: ; 16x15
 .byte $01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01
 .byte $01,$05,$05,$05,$05,$05,$05,$05,$05,$05,$05,$05,$05,$05,$05,$01
 .byte $01,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$01
@@ -70,6 +74,19 @@ game_init:
 		sta palette, X
 		inx
 		cpx #32
+		bcc :-
+	lda currentLevel 
+	tax 
+	lda levels+1,X 
+	sta pointer+1 
+	lda levels,X 
+	sta pointer 
+	ldy #0
+	:
+		lda (pointer),Y 
+		sta map,Y  
+		iny 
+		cpy #$F0 
 		bcc :-
 	jsr draw_background
 	lda #$80
@@ -834,7 +851,7 @@ get_map_tile_for_x_y:
 	bne :-
 	:
 	tay	
-	lda	test_map,Y ; the current map byte
+	lda	map,Y ; the current map byte
 	sta	current_tile
 	pla	
 	tay	
@@ -890,13 +907,13 @@ write_attribute_byte:
 	bne :-
 	:
 	tax	
-	lda test_map,X	
+	lda map,X	
 	tay	
 	lda	map_attributes,Y	
 	and #%00000011
 	sta temp	
 	inx	
-	lda	test_map,X
+	lda	map,X
 	tay	
 	lda	map_attributes,Y
 	and #%00000011
@@ -909,7 +926,7 @@ write_attribute_byte:
 	clc	
 	adc	#MAP_WIDTH-1
 	tax	
-	lda	test_map,X
+	lda	map,X
 	tay	
 	lda	map_attributes,Y
 	and #%00000011
@@ -920,7 +937,7 @@ write_attribute_byte:
 	ora	temp
 	sta temp
 	inx	
-	lda	test_map,X
+	lda	map,X
 	tay	
 	lda	map_attributes,Y
 	and #%00000011

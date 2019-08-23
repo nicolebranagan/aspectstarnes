@@ -1,7 +1,7 @@
 .importzp nmi_ready, PAD_START, gamepad, GAME_TITLE, gameState, nmi_count, nmi_scroll, aspect, facing, moving, xpos, ypos
 .importzp FACING_LEFT, FACING_RIGHT, last_gamepad, nmi_mask
 .importzp enemy_x, enemy_y, enemy_asp, enemy_face, enemy_attr, lives
-.import palette, clear_nametable, ppu_address_tile, gamepad_poll, game_preload, oam, draw_friend, enemy_draw, game_init
+.import palette, clear_nametable, ppu_address_tile, gamepad_poll, game_preload, oam, draw_friend, enemy_draw
 
 .export title_init, title_update, write_text_at_x_y, pointer 
 
