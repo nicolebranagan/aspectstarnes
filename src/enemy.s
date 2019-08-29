@@ -1,4 +1,4 @@
-.importzp nmi_count, FACING_DOWN, FACING_UP, FACING_LEFT, FACING_RIGHT, xpos, ypos, aspect, current_tile, bullety, bulletx, bulletasp, gameState, GAME_DEAD
+.importzp nmi_count, FACING_DOWN, FACING_UP, FACING_LEFT, FACING_RIGHT, xpos, ypos, aspect, current_tile, bullety, bulletx, bulletasp, gameState, GAME_DEAD, pointer, currentLevel
 .import oam, is_solid, get_map_tile_for_x_y, map_attributes, game_die
 .export enemy_draw, enemy_init, enemy_update, enemy_x, enemy_y, enemy_asp, enemy_face, enemy_attr, no_enemy_left
 
@@ -12,6 +12,17 @@ enemy_attr: .res 8
 temp:       .res 1
 frame:      .res 1
 flipped:    .res 1
+
+.segment "RODATA"
+enemy_data:
+.word enemy1
+
+enemy1:
+; attr, Y coordinate, X coordinate, aspect
+.byte $00, $a0, $80, $01
+.byte $00, $c0, $40, $02
+.byte $00, $c0, $b0, $03
+.byte $ff
 
 .macro iny4
     iny
@@ -99,26 +110,32 @@ enemy_init:
         inx 
         cpx #$08
         bne :-
-    lda #$40
-    sta enemy_y
-    sta enemy_x
-    lda #$01
-    sta enemy_asp 
-
-    lda #$38
-    sta enemy_y+1
-    lda #$80
-    sta enemy_x+1
-    lda #$02
-    sta enemy_asp+1
-
-    lda #$40
-    sta enemy_y+2
-    lda #$B0
-    sta enemy_x+2
-    lda #$03
-    sta enemy_asp+2
-
+    lda currentLevel
+    tax 
+    lda enemy_data,X 
+    sta pointer
+    lda enemy_data+1,X 
+    sta pointer+1 
+    ldx #0
+    ldy #0 
+        @loop:
+        lda (pointer),Y 
+        cmp #$FF 
+        beq @done
+        sta enemy_attr,X 
+        iny 
+        lda (pointer),Y 
+        sta enemy_y,X 
+        iny 
+        lda (pointer),Y 
+        sta enemy_x,X 
+        iny 
+        lda (pointer),Y 
+        sta enemy_asp,X 
+        iny 
+        inx 
+        jmp @loop
+    @done:
     rts 
 
 enemy_update:
