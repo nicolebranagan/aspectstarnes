@@ -1,5 +1,5 @@
 .importzp PAD_A, PAD_B, PAD_SELECT, PAD_START, PAD_U, PAD_D, PAD_L, PAD_R, gamepad, nmi_ready, nmi_count, gameState, GAME_INIT, GAME_RUNNING, GAME_PAUSE, GAME_DEAD, nmi_mask, nmi_scroll, GAME_PRELEVEL, pointer, GAME_WIN
-.import palette, bullet_init, enemy_init, gamepad_poll, oam, bullet_fire, bullet_draw, bullet_update, enemy_init, enemy_draw, enemy_update, ppu_address_tile, title_update, write_text_at_x_y, title_init
+.import palette, bullet_init, enemy_init, gamepad_poll, oam, bullet_fire, bullet_draw, bullet_update, enemy_init, enemy_draw, enemy_update, ppu_address_tile, title_update, write_text_at_x_y, title_init, level_data
 
 .exportzp aspect, xpos, ypos, facing, FACING_DOWN, FACING_LEFT, FACING_RIGHT, FACING_UP, current_tile, moving, lives, currentLevel
 .export is_solid, get_map_tile_for_x_y, map_attributes, game_update, clear_nametable, draw_friend, game_preload, game_die
@@ -37,26 +37,6 @@ level_palette:
 .byte $0F,$0b,$1a,$3a ; sp2 aspect x
 .byte $0F,$07,$16,$36 ; sp3 aspect circle
 
-levels:
-.word level1
-
-level1: ; 16x15
-.byte $01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01
-.byte $01,$05,$05,$05,$05,$05,$05,$05,$05,$05,$05,$05,$05,$05,$05,$01
-.byte $01,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$01
-.byte $01,$00,$00,$05,$05,$00,$00,$00,$00,$00,$00,$05,$05,$00,$00,$01
-.byte $01,$00,$01,$00,$00,$00,$01,$05,$05,$01,$00,$00,$00,$01,$00,$01
-.byte $01,$00,$05,$00,$03,$00,$01,$00,$00,$01,$00,$04,$00,$05,$00,$01
-.byte $01,$00,$00,$00,$00,$00,$05,$00,$00,$05,$00,$00,$00,$00,$00,$01
-.byte $01,$05,$05,$05,$00,$00,$00,$00,$00,$00,$00,$00,$05,$05,$05,$01
-.byte $01,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$01
-.byte $01,$00,$05,$05,$05,$00,$00,$00,$00,$00,$00,$05,$05,$05,$00,$01
-.byte $01,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$01
-.byte $01,$00,$00,$02,$00,$00,$00,$00,$00,$00,$00,$00,$02,$00,$00,$01
-.byte $01,$00,$00,$00,$00,$00,$01,$00,$00,$01,$00,$00,$00,$00,$00,$01
-.byte $01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01
-.byte $01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01
-
 map_tiles:
 .byte $08,$04,$0C,$10,$14,$18
 map_attributes: ; xxxSAAPP - P: Palette, A: Aspect, S: Solid
@@ -77,9 +57,9 @@ game_init:
 		bcc :-
 	lda currentLevel 
 	tax 
-	lda levels+1,X 
+	lda level_data+1,X 
 	sta pointer+1 
-	lda levels,X 
+	lda level_data,X 
 	sta pointer 
 	ldy #0
 	:
