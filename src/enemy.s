@@ -349,16 +349,34 @@ check_if_player_dead:
         inx 
         cpx #$08
         bne :-
+    ldx #$01
+
     lda ypos 
     sta enemy_y 
+    sta enemy_y,X 
+    inc enemy_y
+    inc enemy_y
+    inc enemy_y
+
     lda xpos 
     sta enemy_x 
-    lda #$FF 
+    sta enemy_x,X 
+    dec enemy_x,X 
+
+    lda #$02 
     sta enemy_face 
-    lda #$00
+    sta enemy_face,X 
+
+    lda #$04
     sta enemy_attr 
+    lda #$05
+    sta enemy_attr,X 
+
+    lda aspect
+    sta enemy_asp,X 
     lda #$00
-    sta enemy_asp
+    sta enemy_asp 
+
     jmp game_die
 
 enemy_enemy_collision:
@@ -470,6 +488,14 @@ enemy_sprites:
     .byte $24, $25, $26, $27
     .byte $58, $59, $5a, $5b
     .byte $5c, $5d, $5e, $5f
+    .byte $20, $21, $22, $23 ; death
+    .byte $24, $25, $26, $27
+    .byte $4c, $4d, $00, $00
+    .byte $4e, $4f, $00, $00
+    .byte $20, $21, $22, $23 ; death2
+    .byte $24, $25, $26, $27
+    .byte $50, $51, $52, $53
+    .byte $54, $55, $56, $57
     .byte $e0, $e1, $e2, $e3 ; explosion  frames
     .byte $e4, $e5, $e6, $e7
     .byte $e8, $e9, $ea, $eb 
@@ -489,7 +515,7 @@ draw_single_enemy:
     bne :+
         lda enemy_attr,X 
         clc 
-        adc #$10
+        adc #$18
         sta frame 
         lda #$00
         sta flipped 

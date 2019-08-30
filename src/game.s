@@ -499,7 +499,7 @@ dead_update:
 	lda timer 
 	cmp #$20
 	bcs :+
-		jsr enemy_update
+		;jsr enemy_update
 		jsr enemy_draw
 	:
 	lda #$01
