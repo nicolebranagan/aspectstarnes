@@ -143,11 +143,6 @@ update_single_enemy:
     bne :+
         rts 
     :
-    lda gameState 
-    cmp #GAME_DEAD 
-    bne :+
-        rts 
-    :
 
     lda enemy_face,X 
     cmp #$FF ; is this an explosion
@@ -343,6 +338,27 @@ check_if_player_dead:
     bcc :+
         rts 
     :
+    ldx #$01
+    :
+        lda #$FF
+        sta enemy_y,X ; Store 255 in the y position
+        lda #$00
+        sta enemy_face,X 
+        lda #$00
+        sta enemy_attr,X 
+        inx 
+        cpx #$08
+        bne :-
+    lda ypos 
+    sta enemy_y 
+    lda xpos 
+    sta enemy_x 
+    lda #$FF 
+    sta enemy_face 
+    lda #$00
+    sta enemy_attr 
+    lda #$00
+    sta enemy_asp
     jmp game_die
 
 enemy_enemy_collision:
@@ -396,6 +412,11 @@ enemy_enemy_collision:
     rts 
 
 no_enemy_left:
+    lda gameState 
+    cmp #GAME_DEAD 
+    bne :+
+        rts 
+    :
     ldx #$00
     :
         lda enemy_y,X 

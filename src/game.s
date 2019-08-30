@@ -153,8 +153,6 @@ game_die:
 	dec lives 
 	lda #GAME_DEAD
 	sta gameState 
-	lda #%11100000
-	sta nmi_mask
 	ldx #0
 	lda #$FF
 	: ; clear sprites
@@ -497,6 +495,12 @@ dead_update:
 		beq :+
 			lda currentLevel
 			jmp game_preload
+	:
+	lda timer 
+	cmp #$20
+	bcs :+
+		jsr enemy_update
+		jsr enemy_draw
 	:
 	lda #$01
 	sta	nmi_ready	
