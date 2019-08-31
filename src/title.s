@@ -1,7 +1,8 @@
 .importzp nmi_ready, PAD_START, gamepad, GAME_TITLE, gameState, nmi_count, nmi_scroll, aspect, facing, moving, xpos, ypos
 .importzp FACING_LEFT, FACING_RIGHT, last_gamepad, nmi_mask
 .importzp enemy_x, enemy_y, enemy_asp, enemy_face, enemy_attr, lives
-.import palette, clear_nametable, ppu_address_tile, gamepad_poll, game_preload, oam, draw_friend, enemy_draw
+.importzp bulletx, bullety, bulletasp
+.import palette, clear_nametable, ppu_address_tile, gamepad_poll, game_preload, oam, draw_friend, enemy_draw, bullet_draw
 
 .export title_init, title_update, write_text_at_x_y, pointer 
 
@@ -37,6 +38,9 @@ COPYRIGHT:
 .asciiz "COPYRIGHT 2019"
 NICOLE_EXPRESS:
 .asciiz "NICOLE EXPRESS"
+
+location_by_aspect:
+.byte $00, $97, $9e, $a5 
 
 .segment "CODE"
 title_init:
@@ -283,6 +287,12 @@ chase_update:
         sta palette+6
         lda aspect_pal2,X 
         sta palette+7 
+        lda aspect 
+        clc 
+        adc #$E4 
+        sta bulletasp 
+        lda location_by_aspect,X 
+        sta bulletx 
         lda #$00
         sta timer
     @done:
@@ -300,6 +310,7 @@ chase_update:
     :
     jsr draw_friend
     jsr enemy_draw
+    jsr bullet_draw
     lda enemy_asp
     cmp aspect 
     bne :+
@@ -378,6 +389,12 @@ init_chase:
     sta enemy_x 
     lda #FACING_LEFT
     sta enemy_face
+    lda location_by_aspect+1
+    sta bulletx 
+    lda #$37
+    sta bullety 
+    lda #$E5 
+    sta bulletasp
     lda #CHASE_PHASE
     sta titlePhase
     rts 

@@ -30,6 +30,7 @@ bullet_draw:
     adc bulletasp
     sta oam+(BULLET_SPRITE*4)+1
     lda bulletasp
+    and #%00000011
     sta oam+(BULLET_SPRITE*4)+2
     lda bulletx
     sec 
