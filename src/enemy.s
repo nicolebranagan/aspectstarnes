@@ -326,6 +326,11 @@ check_if_dead:
     rts 
 
 check_if_player_dead:
+    lda gameState 
+    cmp #GAME_WIN 
+    bne :+
+        rts 
+    :
     lda enemy_x,X 
     absSub xpos 
     cmp #$0c

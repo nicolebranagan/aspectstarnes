@@ -569,6 +569,7 @@ win_update:
 	jsr game_preload
 	lda #$01 
 	sta nmi_ready
+	rts
 
 FLOATING_FACE_L=$01
 FLOATING_FACE_R=$02
