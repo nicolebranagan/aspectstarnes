@@ -102,8 +102,9 @@ enemy_init:
         cpx #$08
         bne :-
     lda currentLevel
+    asl 
     tax 
-    lda enemy_data,X 
+    lda enemy_data, X 
     sta pointer
     lda enemy_data+1,X 
     sta pointer+1 

@@ -56,6 +56,7 @@ game_init:
 		cpx #32
 		bcc :-
 	lda currentLevel 
+	asl 
 	tax 
 	lda level_data+1,X 
 	sta pointer+1 
