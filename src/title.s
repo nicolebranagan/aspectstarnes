@@ -289,7 +289,7 @@ chase_update:
         sta palette+7 
         lda aspect 
         clc 
-        adc #$E4 
+        adc #$2C 
         sta bulletasp 
         lda location_by_aspect,X 
         sta bulletx 
@@ -393,7 +393,7 @@ init_chase:
     sta bulletx 
     lda #$37
     sta bullety 
-    lda #$E5 
+    lda #$2d
     sta bulletasp
     lda #CHASE_PHASE
     sta titlePhase
