@@ -393,6 +393,9 @@ enemy_enemy_collision:
     ldy #$00
     ldx #$01
     innerLoop:
+        lda enemy_y,Y 
+        cmp #$FF 
+        beq doneComparison
         lda enemy_y,X 
         cmp #$FF 
         beq doneComparison 
@@ -461,7 +464,9 @@ enemy_enemy_collision:
         doneComparison:
         inx 
         cpx #$08 
-        bne innerLoop 
+        beq :+
+            jmp innerLoop 
+        :
         iny 
         tya 
         tax 
