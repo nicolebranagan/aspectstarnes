@@ -10,6 +10,8 @@ enemy_face: .res 8
 enemy_attr: .res 8
 
 temp:       .res 1
+tempx:      .res 1
+tempy:      .res 1
 frame:      .res 1
 flipped:    .res 1
 
@@ -134,7 +136,11 @@ enemy_update:
         inx 
         cpx #$08
         bne :-
-    jsr enemy_enemy_collision
+    lda gameState 
+    cmp #GAME_DEAD 
+    beq :+
+        jsr enemy_enemy_collision
+    :
     rts 
 
 update_single_enemy:
@@ -366,7 +372,6 @@ check_if_player_dead:
     lda xpos 
     sta enemy_x 
     sta enemy_x,X 
-    dec enemy_x,X 
 
     lda #$02 
     sta enemy_face 
@@ -394,34 +399,65 @@ enemy_enemy_collision:
         sta temp 
         lda enemy_y,Y 
         absSub temp 
+        sta tempy 
         cmp #$0C
         bcs doneComparison
         lda enemy_x,X 
         sta temp 
         lda enemy_x,Y 
         absSub temp
+        sta tempx 
         cmp #$0C
         bcs doneComparison
-            lda enemy_face,X
-            cmp #FACING_DOWN
-            bne @aa
-                dec enemy_y,X
-            @aa:
-            lda enemy_face,X
-            cmp #FACING_UP
-            bne @bb
-                inc enemy_y,X
-            @bb:
-            lda enemy_face,X
-            cmp #FACING_RIGHT
-            bne @cc
-                dec enemy_x,X
-            @cc:
-            lda enemy_face,X
-            cmp #FACING_LEFT
-            bne @dd
-                inc enemy_x,X  
-            @dd:
+            lda tempx 
+            cmp tempy 
+            bcs @ygreater
+                ; del x > del y
+                lda enemy_x,X 
+                cmp enemy_x,Y 
+                bcc :+
+                    inc enemy_x,X 
+                    txa 
+                    pha 
+                    tya 
+                    tax 
+                    dec enemy_x,X 
+                    pla 
+                    tax 
+                    jmp doneComparison
+                :
+                    dec enemy_x,X 
+                    txa 
+                    pha 
+                    tya 
+                    tax 
+                    inc enemy_x,X 
+                    pla 
+                    tax 
+                    jmp doneComparison 
+            @ygreater:
+                lda enemy_y,X 
+                cmp enemy_y,Y 
+                bcc :+
+                    inc enemy_y,X 
+                    txa 
+                    pha 
+                    tya 
+                    tax 
+                    dec enemy_y,X  
+                    pla 
+                    tax 
+                    jmp doneComparison
+                :
+                    dec enemy_y,X 
+                    txa 
+                    pha 
+                    tya 
+                    tax 
+                    inc enemy_y,X 
+                    pla 
+                    tax 
+                    jmp doneComparison 
         doneComparison:
         inx 
         cpx #$08 
@@ -431,7 +467,9 @@ enemy_enemy_collision:
         tax 
         inx 
         cpy #$07 
-        bne innerLoop 
+        beq :+
+            jmp innerLoop 
+        :
     rts 
 
 no_enemy_left:
