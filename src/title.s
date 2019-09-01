@@ -16,6 +16,10 @@ TRAIN_PHASE=$00
 SCROLL_PHASE=$01
 CHASE_PHASE=$02
 
+.segment "BSS"
+
+loopcount=$00
+
 .segment "RODATA"
 title_palette:
 .byte $0F,$30,$16,$00 ; bg0 title text
@@ -47,6 +51,7 @@ title_init:
     lda #$00
 	sta $2001
     sta nmi_mask
+    sta nmi_scroll
     ldx #0
 	:; store palettes in palette
 		lda title_palette, X
@@ -260,6 +265,7 @@ chase_update:
         lda aspect 
         cmp #$04
         bne :+
+            inc loopcount
             lda #$01
             sta aspect
         :
@@ -321,6 +327,17 @@ chase_update:
         dec xpos
         dec enemy_x
     :
+    lda loopcount 
+    cmp #$03 
+    bne :+
+        lda #$FF 
+        sta enemy_y 
+        sta bullety 
+        sta ypos 
+        jsr draw_friend
+        jsr bullet_draw
+        jsr title_init
+    :
     lda #$01
 	sta	nmi_ready
     rts 
@@ -381,6 +398,7 @@ init_chase:
     sta moving
     lda #$00
     sta enemy_attr 
+    sta loopcount
     lda #$02
     sta enemy_asp 
     lda #$70 
