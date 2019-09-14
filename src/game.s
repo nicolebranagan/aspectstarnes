@@ -1,6 +1,6 @@
 .importzp PAD_A, PAD_B, PAD_SELECT, PAD_START, PAD_U, PAD_D, PAD_L, PAD_R, gamepad, nmi_ready, nmi_count, gameState, GAME_INIT, GAME_RUNNING, GAME_PAUSE, GAME_DEAD, nmi_mask, nmi_scroll, GAME_PRELEVEL, pointer, GAME_WIN
 .import palette, bullet_init, enemy_init, gamepad_poll, oam, bullet_fire, bullet_draw, bullet_update, enemy_init, enemy_draw, enemy_update, ppu_address_tile, title_update, write_text_at_x_y, title_init, level_data
-.import FamiToneMusicPlay, FamiToneMusicStop, FamiToneMusicPause
+.import FamiToneMusicPlay, FamiToneMusicStop, FamiToneMusicPause, FamiToneSfxPlay
 
 .exportzp aspect, xpos, ypos, facing, FACING_DOWN, FACING_LEFT, FACING_RIGHT, FACING_UP, current_tile, moving, lives, currentLevel
 .export is_solid, get_map_tile_for_x_y, map_attributes, game_update, clear_nametable, draw_friend, game_preload, game_die
@@ -155,6 +155,9 @@ game_preload:
 game_die:
 	jsr FamiToneMusicStop
 	dec lives 
+	ldx #$00
+	lda #$02
+	jsr FamiToneSfxPlay
 	lda #GAME_DEAD
 	sta gameState 
 	ldx #0
@@ -447,8 +450,10 @@ check_player_aspect:
 	lsr 
 	cmp aspect
 	beq @done
-	; TODO: The player has a new aspect, this must be celebrated
-	sta aspect 
+	sta aspect
+	ldx #$00
+	lda #$01
+	jsr FamiToneSfxPlay 
 	@done:
 	rts 
 
@@ -487,12 +492,12 @@ dead_update:
 	sta nmi_scroll
 	inc timer
 	lda timer 
-	cmp #$50
+	cmp #$90
 	bne :+
 		jsr title_init
 	:
 	lda timer 
-	cmp #$20
+	cmp #$5A
 	bne :+
 		lda #%11100001
 		sta nmi_mask
@@ -502,7 +507,7 @@ dead_update:
 			jmp game_preload
 	:
 	lda timer 
-	cmp #$20
+	cmp #$40
 	bcs :+
 		jsr enemy_draw
 	:
