@@ -2,7 +2,7 @@
 .importzp FACING_LEFT, FACING_RIGHT, last_gamepad, nmi_mask
 .importzp enemy_x, enemy_y, enemy_asp, enemy_face, enemy_attr, lives
 .importzp bulletx, bullety, bulletasp
-.import palette, clear_nametable, ppu_address_tile, gamepad_poll, game_preload, oam, draw_friend, enemy_draw, bullet_draw
+.import palette, clear_nametable, ppu_address_tile, gamepad_poll, game_preload, oam, draw_friend, enemy_draw, bullet_draw, FamiToneSfxPlay
 
 .export title_init, title_update, write_text_at_x_y, pointer 
 
@@ -235,6 +235,20 @@ train_update:
     bne :+
         jsr init_scroll
     :
+    lda enemy_x
+    cmp #$60
+    bne :+
+        lda #$05
+        ldx #$00
+        jsr FamiToneSfxPlay
+    :
+    lda enemy_x 
+    cmp #$89 
+    bne :+
+        lda #$05
+        ldx #$00
+        jsr FamiToneSfxPlay
+    :
     jsr gamepad_poll
     lda gamepad 
     and #PAD_START
@@ -301,6 +315,9 @@ chase_update:
         sta bulletx 
         lda #$00
         sta timer
+        lda #$01 
+        ldx #$00
+        jsr FamiToneSfxPlay
     @done:
     jsr gamepad_poll
     lda gamepad 
@@ -415,4 +432,7 @@ init_chase:
     sta bulletasp
     lda #CHASE_PHASE
     sta titlePhase
+    lda #$04
+    ldx #$00
+    jsr FamiToneSfxPlay
     rts 
