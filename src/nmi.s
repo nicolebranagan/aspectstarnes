@@ -5,7 +5,7 @@
 .export palette, nmi, oam
 .exportzp nmi_ready, nmi_count, nmi_mask, nmi_scroll
 
-.import frame
+.import frame, FamiToneUpdate
 
 .segment "ZEROPAGE"
 nmi_lock:       .res 1 ; prevents NMI re-entry
@@ -84,6 +84,7 @@ nmi:
 	; flag PPU update complete
 	ldx #0
 	stx nmi_ready
+	jsr FamiToneUpdate
 	jsr frame
 @ppu_update_end:
 	; if this engine had music/sound, this would be a good place to play it

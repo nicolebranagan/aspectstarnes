@@ -1,5 +1,6 @@
 .importzp nmi_count, FACING_DOWN, FACING_UP, FACING_LEFT, FACING_RIGHT, xpos, ypos, aspect, current_tile, bullety, bulletx, bulletasp, gameState, GAME_DEAD, pointer, currentLevel, GAME_WIN
 .import oam, is_solid, get_map_tile_for_x_y, map_attributes, game_die, enemy_data
+.import FamiToneMusicStop
 .export enemy_draw, enemy_init, enemy_update, enemy_x, enemy_y, enemy_asp, enemy_face, enemy_attr
 
 .segment "ZEROPAGE"
@@ -493,7 +494,8 @@ no_enemy_left:
         cpx #$08
         bne :-
     lda #GAME_WIN 
-    sta gameState 
+    sta gameState
+    jsr FamiToneMusicStop 
     rts 
     @enemyalive:
     rts 
