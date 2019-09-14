@@ -4,7 +4,7 @@
 
 .importzp nmi_ready, nmi_mask, nmi_scroll
 .import game_update, nmi, oam, title_init
-.import FamiToneInit, MusicData
+.import FamiToneInit, MusicData, FamiToneSfxInit, SfxData
 
 .exportzp gameState, GAME_RUNNING, GAME_INIT, GAME_DEAD, GAME_PAUSE, GAME_TITLE, GAME_PRELEVEL, GAME_WIN
 .export frame, ppu_address_tile
@@ -126,6 +126,12 @@ main:
 	tay 
 	lda #$01
 	jsr FamiToneInit
+	lda #<SfxData 
+	tax 
+	lda #>SfxData 
+	tay 
+	lda #$01
+	jsr FamiToneSfxInit
 	lda #$01
 	sta	nmi_ready	
 	:

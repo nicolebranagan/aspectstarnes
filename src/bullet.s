@@ -1,5 +1,5 @@
 .importzp aspect, xpos, ypos, facing, FACING_UP, FACING_DOWN, FACING_LEFT, FACING_RIGHT
-.import is_solid, oam
+.import is_solid, oam, FamiToneSfxPlay
 
 .export bullet_init, bullet_draw, bullet_fire, bullet_update, bullety, bulletx, bulletasp
 
@@ -52,6 +52,9 @@ bullet_fire:
     sta bullety
     lda facing
     sta bulletface
+    lda #$00
+    ldx #$00
+    jsr FamiToneSfxPlay
     rts 
 
 bullet_update:
