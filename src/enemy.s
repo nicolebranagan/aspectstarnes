@@ -309,6 +309,11 @@ check_enemy_aspect:
     rts 
 
 check_if_dead:
+    lda enemy_face,X 
+    cmp #$FF 
+    bne :+
+        rts 
+    :
     lda enemy_x,X 
     absSub bulletx 
     cmp #$08
