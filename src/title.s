@@ -1,5 +1,5 @@
 .importzp nmi_ready, PAD_START, gamepad, GAME_TITLE, gameState, nmi_count, nmi_scroll, aspect, facing, moving, xpos, ypos
-.importzp FACING_LEFT, FACING_RIGHT, last_gamepad, nmi_mask
+.importzp FACING_LEFT, FACING_RIGHT, last_gamepad, nmi_mask, PAD_SELECT
 .importzp enemy_x, enemy_y, enemy_asp, enemy_face, enemy_attr, lives
 .importzp bulletx, bullety, bulletasp
 .import palette, clear_nametable, ppu_address_tile, gamepad_poll, game_preload, oam, draw_friend, enemy_draw, bullet_draw, FamiToneSfxPlay
@@ -18,7 +18,8 @@ CHASE_PHASE=$02
 
 .segment "BSS"
 
-loopcount=$00
+firstLevel: .res 1
+loopcount:  .res 1
 
 .segment "RODATA"
 title_palette:
@@ -52,6 +53,7 @@ title_init:
 	sta $2001
     sta nmi_mask
     sta nmi_scroll
+    sta loopcount
     ldx #0
 	:; store palettes in palette
 		lda title_palette, X
@@ -328,8 +330,17 @@ chase_update:
         bne :+
         lda #$03
         sta lives
-        lda #$00
+        lda firstLevel
         jmp game_preload
+    :
+    lda gamepad
+    and #PAD_SELECT
+    beq :+
+        lda last_gamepad 
+        and #PAD_SELECT 
+        bne :+
+        inc firstLevel 
+        inc enemy_attr 
     :
     jsr draw_friend
     jsr enemy_draw
@@ -416,6 +427,7 @@ init_chase:
     lda #$00
     sta enemy_attr 
     sta loopcount
+    sta firstLevel
     lda #$02
     sta enemy_asp 
     lda #$70 
