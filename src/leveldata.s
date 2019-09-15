@@ -49,7 +49,6 @@ level2: ; 16x15
 
 enemy2:
 ; attr, Y coordinate, X coordinate, aspect
-.byte $00, $a0, $80, $02
 .byte $00, $30, $20, $02
 .byte $00, $30, $d9, $02
 .byte $00, $80, $1a, $02
