@@ -9,6 +9,7 @@ enemy_y:    .res 8
 enemy_asp:  .res 8
 enemy_face: .res 8
 enemy_attr: .res 8
+enemy_ptr:  .res 2
 
 temp:       .res 1
 tempx:      .res 1
@@ -174,6 +175,10 @@ update_single_enemy:
     bne :+
         rts 
     :
+    cmp #GAME_WIN 
+    bne :+
+        rts 
+    :
     lda enemy_face,X 
     cmp #$FF ; is this an explosion
     bne :+
@@ -181,6 +186,27 @@ update_single_enemy:
     :
 
     jsr check_enemy_aspect
+
+    txa 
+    pha 
+    lda enemy_attr,X 
+    asl 
+    tax 
+    lda enemyJumpTable+1,X 
+    sta enemy_ptr+1 
+    lda enemyJumpTable,X 
+    sta enemy_ptr 
+    pla 
+    tax 
+    jmp (enemy_ptr)
+
+.segment "RODATA"
+enemyJumpTable:
+    .word mouse_update, bird_update
+
+.segment "CODE"
+
+mouse_update:
     lda nmi_count 
     adc enemy_y,X 
     and #%01010100
@@ -268,6 +294,9 @@ update_single_enemy:
     :
     rts 
 
+bird_update:
+    rts 
+
 check_enemy_aspect:
     txa 
     pha 
@@ -298,9 +327,13 @@ check_enemy_aspect:
     cmp enemy_asp,X
     beq :+
     sta enemy_asp,X
+    txa 
+    pha 
     ldx #$00
 	lda #$01
-	jsr FamiToneSfxPlay 
+	jsr FamiToneSfxPlay
+    pla 
+    tax   
     :
     rts 
     @done:
@@ -337,9 +370,14 @@ check_if_dead:
     sta enemy_face,X 
     lda #$00
     sta enemy_asp,X 
+    sta enemy_attr,X 
+    txa 
+    pha 
     lda #$03
     ldx #$00
     jsr FamiToneSfxPlay
+    pla 
+    tax  
     rts 
 
 check_if_player_dead:
