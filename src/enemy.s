@@ -297,8 +297,10 @@ check_enemy_aspect:
     tya 
     cmp enemy_asp,X
     beq :+
-    ; TODO: play sound effect
     sta enemy_asp,X
+    ldx #$00
+	lda #$01
+	jsr FamiToneSfxPlay 
     :
     rts 
     @done:

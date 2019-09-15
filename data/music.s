@@ -122,7 +122,7 @@ framebyframe_music_data:
 	.byte $ff,$10
 	.word @ref29
 @ref34:
-	.byte $32,$85,$32,$85,$2e,$85,$24,$85,$32,$85,$32,$85,$2e,$85,$24,$85
+	.byte $4a,$85,$4a,$85,$46,$85,$3c,$85,$4a,$85,$4a,$85,$46,$85,$3c,$85
 	.byte $ff,$10
 	.word @ref34
 	.byte $ff,$10
@@ -133,10 +133,11 @@ framebyframe_music_data:
 	.word @ref34
 	.byte $ff,$10
 	.word @ref34
-	.byte $ff,$10
-	.word @ref34
-	.byte $ff,$10
-	.word @ref34
+@ref40:
+	.byte $4a,$85,$4a,$85,$46,$85,$3c,$85,$86,$3a,$85,$32,$85,$32,$85,$00
+	.byte $85
+@ref41:
+	.byte $bf
 	.byte $fd
 	.word @song0ch2loop
 
@@ -166,10 +167,10 @@ framebyframe_music_data:
 	.word @ref46
 	.byte $ff,$07
 	.word @ref45
-	.byte $ff,$07
-	.word @ref46
-	.byte $ff,$07
-	.word @ref45
+@ref54:
+	.byte $bf
+@ref55:
+	.byte $bf
 	.byte $fd
 	.word @song0ch3loop
 
