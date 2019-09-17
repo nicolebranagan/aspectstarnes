@@ -194,10 +194,14 @@ write_text_at_x_y:
     ldy #$00
     :
         lda (pointer),Y
-        beq :+
+        beq :++
+        cmp #$20
+        bne :+
+            lda #$00
+        :
         sta $2007
         iny 
-        bne :-
+        bne :--
     :
     rts 
 
