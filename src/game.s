@@ -33,29 +33,58 @@ level_palette:
 .byte $0F,$04,$12,$01 ; bg1 floor, aspect plus
 .byte $0F,$04,$19,$09 ; bg2 floor, aspect x
 .byte $0F,$04,$15,$06 ; bg3 floor, aspect circle
+factory_palette:
+.byte $0B,$23,$13,$03 ; bg0 bricks
+.byte $0B,$11,$10,$00 ; bg1 floor, aspect plus
+.byte $0B,$19,$10,$00 ; bg2 floor, aspect x
+.byte $0B,$15,$10,$00 ; bg3 floor, aspect circle
+sprite_palette:
 .byte $0F,$0F,$26,$37 ; sp0 floating face
 .byte $0F,$0c,$11,$31 ; sp1 aspect plus
 .byte $0F,$0b,$1a,$3a ; sp2 aspect x
 .byte $0F,$07,$16,$36 ; sp3 aspect circle
 
 map_tiles:
-.byte $08,$04,$0C,$10,$14,$18
+.byte $08,$04,$0C,$10,$14,$18 ; 0, 1, 2, 3, 4, 5
+.byte $24,$1C,$20,$28,$2C,$2C,$2C; 6, 7, 8, 9, A, B, C, D
 map_attributes: ; xxxSAAPP - P: Palette, A: Aspect, S: Solid
 .byte %00000001, %00010000, %00000101, %00001010, %00001111, %00010000
+.byte %00000001, %00010000, %00010000, %00000001, %00000101, %00001010, %00001111
 MAP_WIDTH=$10
 MAP_HEIGHT=$0F
+palette_by_stage:
+.byte $00, $00, $00, $01, $01, $01, $02, $02, $02
+level_palettes:
+.word level_palette, factory_palette
 
 .segment "CODE"
 game_init:
 	lda #$00
 	sta $2001
 	jsr FamiToneMusicPlay
-    ldx #0
+	lda currentLevel
+	tax 
+	lda palette_by_stage,X 
+	asl 
+	tax 
+	lda level_palettes+1,X 
+	sta pointer+1 
+	lda level_palettes,X 
+	sta pointer 
+    ldy #0
 	:; store level palettes in palette
-		lda level_palette, X
-		sta palette, X
-		inx
-		cpx #32
+		lda (pointer),Y 
+		sta palette,Y 
+		iny
+		cpy #16
+		bcc :-
+	ldx #0
+	:; store sprite palettes in palette
+		lda sprite_palette,X  
+		sta palette,Y 
+		iny 
+		inx 
+		cpy #32
 		bcc :-
 	lda currentLevel 
 	asl 
