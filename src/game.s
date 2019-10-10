@@ -61,10 +61,12 @@ level_palettes:
 game_init:
 	lda #$00
 	sta $2001
-	jsr FamiToneMusicPlay
 	lda currentLevel
 	tax 
 	lda palette_by_stage,X 
+	pha 
+	jsr FamiToneMusicPlay
+	pla 
 	asl 
 	tax 
 	lda level_palettes+1,X 
