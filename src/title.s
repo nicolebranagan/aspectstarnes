@@ -2,6 +2,8 @@
 .importzp FACING_LEFT, FACING_RIGHT, last_gamepad, nmi_mask, PAD_SELECT
 .importzp enemy_x, enemy_y, enemy_asp, enemy_face, enemy_attr, lives
 .importzp bulletx, bullety, bulletasp
+.importzp seed
+.import prng 
 .import palette, clear_nametable, ppu_address_tile, gamepad_poll, game_preload, oam, draw_friend, enemy_draw, bullet_draw, FamiToneSfxPlay
 
 .export title_init, title_update, write_text_at_x_y, pointer 
@@ -61,6 +63,7 @@ title_init:
 		inx
 		cpx #32
 		bcc :-
+    stx seed+1
     jsr clear_nametable
     jsr write_logo
     jsr draw_title
@@ -226,6 +229,7 @@ titleUpdate:
 
 .segment "CODE"
 title_update: 
+    inc seed 
 	lda titlePhase  
 	asl
 	tax

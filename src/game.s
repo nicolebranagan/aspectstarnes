@@ -586,8 +586,8 @@ pause_update:
 		sta temp 
 		lda #$00
 		sta timer 
-		jsr FamiToneMusicPause
 		sta nmi_mask 
+		jsr FamiToneMusicPause
 		lda #GAME_RUNNING 
 		sta gameState 
 	:
