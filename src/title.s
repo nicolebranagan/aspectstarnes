@@ -3,7 +3,6 @@
 .importzp enemy_x, enemy_y, enemy_asp, enemy_face, enemy_attr, lives
 .importzp bulletx, bullety, bulletasp
 .importzp seed
-.import prng 
 .import palette, clear_nametable, ppu_address_tile, gamepad_poll, game_preload, oam, draw_friend, enemy_draw, bullet_draw, FamiToneSfxPlay
 
 .export title_init, title_update, write_text_at_x_y, pointer 

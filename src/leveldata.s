@@ -2,9 +2,9 @@
 
 .segment "RODATA"
 level_data:
-.word level1, level2, level3, level4
+.word level1, level2, level3, level4, level1
 enemy_data:
-.word enemy1, enemy2, enemy3, enemy4 
+.word enemy1, enemy2, enemy3, enemy4, enemy1
 
 level1: ; 16x15
 .byte $01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01

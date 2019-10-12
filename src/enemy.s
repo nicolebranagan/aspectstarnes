@@ -1,6 +1,7 @@
 .importzp nmi_count, FACING_DOWN, FACING_UP, FACING_LEFT, FACING_RIGHT, xpos, ypos, aspect, current_tile, bullety, bulletx, bulletasp, gameState, GAME_DEAD, pointer, currentLevel, GAME_WIN
 .import oam, is_solid, get_map_tile_for_x_y, map_attributes, game_die, enemy_data
 .import FamiToneMusicStop, FamiToneSfxPlay
+.import prng
 .export enemy_draw, enemy_init, enemy_update, enemy_x, enemy_y, enemy_asp, enemy_face, enemy_attr
 
 .segment "ZEROPAGE"
@@ -260,6 +261,7 @@ mouse_update:
     bne :+
         rts 
     :
+enemy_move:
     lda enemy_face,X
     cmp #FACING_DOWN
     bne :+
@@ -295,6 +297,18 @@ mouse_update:
     rts 
 
 bird_update:
+    jsr prng
+    cmp #$f0 
+    bcc @done
+        jsr prng 
+        and #%00000011
+        sta enemy_face,X 
+    @done:
+    jsr prng  
+    cmp #$50
+    bcc :+
+        jmp enemy_move
+    :
     rts 
 
 check_enemy_aspect:
