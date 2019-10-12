@@ -1,4 +1,5 @@
 .importzp nmi_count, FACING_DOWN, FACING_UP, FACING_LEFT, FACING_RIGHT, xpos, ypos, aspect, current_tile, bullety, bulletx, bulletasp, gameState, GAME_DEAD, pointer, currentLevel, GAME_WIN
+.importzp lives
 .import oam, is_solid, get_map_tile_for_x_y, map_attributes, game_die, enemy_data
 .import FamiToneMusicStop, FamiToneSfxPlay
 .import prng
@@ -557,6 +558,22 @@ no_enemy_left:
     lda #GAME_WIN 
     sta gameState
     jsr FamiToneMusicStop 
+    txa 
+    pha 
+    lda #$04
+    ldx #$00
+    jsr FamiToneSfxPlay
+    pla 
+    txa 
+    inc lives
+    inc lives 
+    inc lives
+    lda lives 
+    cmp #$09
+    bcc :+
+        lda #$09
+        sta lives
+    :
     rts 
     @enemyalive:
     rts 

@@ -3,7 +3,8 @@
 .importzp enemy_x, enemy_y, enemy_asp, enemy_face, enemy_attr, lives
 .importzp bulletx, bullety, bulletasp
 .importzp seed
-.import palette, clear_nametable, ppu_address_tile, gamepad_poll, game_preload, oam, draw_friend, enemy_draw, bullet_draw, FamiToneSfxPlay
+.import palette, clear_nametable, ppu_address_tile, gamepad_poll, game_preload, oam, draw_friend, enemy_draw, bullet_draw
+.import FamiToneMusicPlay, FamiToneSfxPlay, FamiToneMusicStop
 
 .export title_init, title_update, write_text_at_x_y, pointer 
 
@@ -335,6 +336,10 @@ chase_update:
         lda last_gamepad ; get the gamepad only on the rising edge
         and #PAD_START
         bne :+
+        jsr FamiToneMusicStop
+        lda #$04
+        ldx #$00
+        jsr FamiToneSfxPlay
         lda #$03
         sta lives
         lda firstLevel
@@ -365,6 +370,7 @@ chase_update:
     lda loopcount 
     cmp #$03 
     bne :+
+        jsr FamiToneMusicStop
         lda #$FF 
         sta enemy_y 
         sta bullety 
@@ -451,7 +457,6 @@ init_chase:
     sta bulletasp
     lda #CHASE_PHASE
     sta titlePhase
-    lda #$04
-    ldx #$00
-    jsr FamiToneSfxPlay
+    lda #$03
+    jsr FamiToneMusicPlay
     rts 
