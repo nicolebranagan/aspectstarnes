@@ -95,10 +95,6 @@ game_init:
 		inx 
 		cpy #32
 		bcc :-
-	ldy #$00 ; Override so we use the first palette entry's background
-	ldx #$10
-	lda (pointer),Y 
-	sta palette,X 
 	lda currentLevel 
 	asl 
 	tax 
