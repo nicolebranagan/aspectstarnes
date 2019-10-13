@@ -34,12 +34,12 @@ level_palette:
 .byte $0F,$04,$19,$09 ; bg2 floor, aspect x
 .byte $0F,$04,$15,$06 ; bg3 floor, aspect circle
 factory_palette:
-.byte $0B,$23,$13,$03 ; bg0 bricks
+.byte $06,$0d,$13,$03 ; bg0 bricks
 .byte $0B,$11,$10,$00 ; bg1 floor, aspect plus
 .byte $0B,$19,$10,$00 ; bg2 floor, aspect x
 .byte $0B,$15,$10,$00 ; bg3 floor, aspect circle
 space_palette:
-.byte $0D,$0C,$1C,$2C ; bg0 bricks, aspect plus
+.byte $0F,$0C,$1C,$2C ; bg0 bricks, aspect plus
 .byte $0D,$00,$10,$20 ; bg1 floor
 .byte $0D,$19,$29,$20 ; bg2 floor, aspect x
 .byte $0B,$15,$25,$20 ; bg3 floor, aspect circle
@@ -51,7 +51,7 @@ sprite_palette:
 
 map_tiles:
 .byte $08,$04,$0C,$10,$14,$18 ; 0, 1, 2, 3, 4, 5
-.byte $24,$1C,$20,$28,$2C,$2C,$2C,$3C; 6, 7, 8, 9, A, B, C, D
+.byte $24,$1C,$20,$28,$2C,$5C,$80,$3C; 6, 7, 8, 9, A, B, C, D
 .byte $68,$60,$64,$6C,$70,$74,$78,$7C, $00; E, F, 10, 11, 12, 13, 14, 15
 map_attributes: ; xxxSAAPP - P: Palette, A: Aspect, S: Solid
 .byte %00000001, %00010000, %00000101, %00001010, %00001111, %00010000
@@ -95,6 +95,10 @@ game_init:
 		inx 
 		cpy #32
 		bcc :-
+	ldy #$00 ; Override so we use the first palette entry's background
+	ldx #$10
+	lda (pointer),Y 
+	sta palette,X 
 	lda currentLevel 
 	asl 
 	tax 
@@ -148,6 +152,8 @@ game_preload:
 		inx 
 		cpx #$04
 		bne :-
+	lda #$0F
+	sta palette+$10 ; clear background color
 	jsr clear_nametable
 
 	lda #<ROUND
