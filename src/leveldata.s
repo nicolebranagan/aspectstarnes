@@ -2,9 +2,9 @@
 
 .segment "RODATA"
 level_data:
-.word level1, level2, level3, level4, level5, level6, level7, level8
+.word level1, level2, level3, level4, level5, level6, level7, level8, level9
 enemy_data:
-.word enemy1, enemy2, enemy3, enemy4, enemy5, enemy6, enemy7, enemy8
+.word enemy1, enemy2, enemy3, enemy4, enemy5, enemy6, enemy7, enemy8, enemy9
 
 level1: ; 16x15
 .byte $01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01
@@ -202,4 +202,29 @@ level8:
 enemy8:
 .byte $02, $80, $20, $02
 .byte $02, $80, $e0, $02
+.byte $ff
+
+level9:
+.byte $16,$16,$16,$16,$16,$16,$16,$10,$10,$16,$16,$16,$16,$16,$16,$16
+.byte $16,$0F,$10,$10,$16,$16,$10,$0E,$0E,$10,$16,$16,$10,$10,$0F,$16
+.byte $16,$0F,$0E,$0E,$10,$10,$0E,$0E,$0E,$0E,$10,$10,$0E,$0E,$0F,$16
+.byte $16,$0F,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0F,$16
+.byte $16,$0F,$0E,$12,$0E,$0E,$0E,$14,$14,$0E,$0E,$0E,$13,$0E,$0F,$16
+.byte $16,$0F,$0E,$0E,$0E,$0E,$14,$15,$15,$14,$0E,$0E,$0E,$0E,$0F,$16
+.byte $16,$10,$0E,$0E,$0E,$0E,$15,$0E,$0E,$15,$0E,$0E,$0E,$0E,$10,$16
+.byte $16,$16,$0F,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0F,$16,$16
+.byte $16,$16,$10,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$10,$16,$16
+.byte $16,$0F,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0F,$16
+.byte $16,$10,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$10,$16
+.byte $0F,$0E,$0E,$0E,$0E,$0E,$0E,$0F,$0F,$0E,$0E,$0E,$0E,$0E,$0E,$0F
+.byte $0F,$0E,$0E,$0E,$0E,$0E,$0F,$10,$10,$0F,$0E,$0E,$0E,$0E,$0E,$0F
+.byte $0F,$0F,$0F,$0F,$0F,$0F,$10,$16,$16,$10,$0F,$0F,$0F,$0F,$0F,$0F
+.byte $0F,$0F,$0F,$0F,$0F,$0F,$16,$16,$16,$16,$0F,$0F,$0F,$0F,$0F,$0F
+
+enemy9:
+.byte $02, $20, $80, $03
+.byte $01, $50, $40, $01
+.byte $01, $c0, $30, $03
+.byte $01, $50, $d0, $01
+.byte $01, $c0, $e0, $02
 .byte $ff
