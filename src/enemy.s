@@ -204,7 +204,7 @@ update_single_enemy:
 
 .segment "RODATA"
 enemyJumpTable:
-    .word mouse_update, bird_update
+    .word mouse_update, bird_update, dog_update
 
 .segment "CODE"
 
@@ -311,6 +311,57 @@ bird_update:
         jmp enemy_move
     :
     rts 
+
+dog_update:
+    lda ypos 
+    sec 
+    sbc enemy_y,X
+    bpl :+ ; half-assed absolute value
+        eor #$FF
+        clc 
+        adc #$01
+    :
+    sta frame 
+    lda xpos 
+    sec 
+    sbc enemy_x,X 
+    bpl :+
+        eor #$FF
+        clc 
+        adc #$01
+    :
+    cmp frame 
+    bcc :++
+        ; X is the smaller dimension
+        lda enemy_x,X
+        cmp xpos 
+        bcs :+
+            lda #FACING_RIGHT 
+            sta enemy_face,X
+            jmp @done 
+        :
+        lda #FACING_LEFT
+        sta enemy_face,X
+        jmp @done
+    :
+        ; Y is the smaller dimension
+        lda enemy_y,X
+        cmp ypos 
+        bcs :+
+            lda #FACING_DOWN
+            sta enemy_face,X
+            jmp @done 
+        :
+        lda #FACING_UP
+        sta enemy_face,X
+        jmp @done
+    @done:
+    lda nmi_count
+    and #%00000111
+    bne :+
+        rts 
+    :
+    jmp enemy_move
 
 check_enemy_aspect:
     txa 
