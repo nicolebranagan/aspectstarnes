@@ -2,11 +2,11 @@
 
 .segment "RODATA"
 convoperlevel:
-.byte $00,$01,$FF,$02,$FF,$FF,$FF,$FF,$FF,$FF
+.byte $00,$01,$FF,$02,$FF,$FF,$03,$FF,$FF,$04
 convodata:
-.word convo4, convo2, convo3, convo4
+.word convo1, convo2, convo3, convo4
 facedata:
-.word face4 , face2 , face3 , face4
+.word face1 , face2 , face3 , face4
 
 convo1:
     .asciiz "My name is Nicole."
