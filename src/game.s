@@ -1,5 +1,5 @@
 .importzp PAD_A, PAD_B, PAD_SELECT, PAD_START, PAD_U, PAD_D, PAD_L, PAD_R, gamepad, nmi_ready, nmi_count, gameState, GAME_INIT, GAME_RUNNING, GAME_PAUSE, GAME_DEAD, nmi_mask, nmi_scroll, GAME_PRELEVEL, pointer, GAME_WIN
-.import palette, bullet_init, enemy_init, gamepad_poll, oam, bullet_fire, bullet_draw, bullet_update, enemy_init, enemy_draw, enemy_update, ppu_address_tile, title_update, write_text_at_x_y, title_init, level_data
+.import palette, bullet_init, enemy_init, gamepad_poll, oam, bullet_fire, bullet_draw, bullet_update, enemy_init, enemy_draw, enemy_update, ppu_address_tile, title_update, write_text_at_x_y, title_init, level_data, convoUpdate
 .import FamiToneMusicPlay, FamiToneMusicStop, FamiToneMusicPause, FamiToneSfxPlay
 
 .exportzp aspect, xpos, ypos, facing, FACING_DOWN, FACING_LEFT, FACING_RIGHT, FACING_UP, current_tile, moving, lives, currentLevel
@@ -226,7 +226,7 @@ FACING_RIGHT=$03
 
 .segment "RODATA"
 gameUpdate:
-	.word running_update, init_update, dead_update, pause_update, title_update, preload_update, win_update
+	.word running_update, init_update, dead_update, pause_update, title_update, preload_update, win_update, convoUpdate
 
 .segment "CODE"
 game_update: 

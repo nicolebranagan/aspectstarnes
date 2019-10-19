@@ -6,7 +6,7 @@
 .import game_update, nmi, oam, title_init
 .import FamiToneInit, MusicData, FamiToneSfxInit, SfxData
 
-.exportzp gameState, GAME_RUNNING, GAME_INIT, GAME_DEAD, GAME_PAUSE, GAME_TITLE, GAME_PRELEVEL, GAME_WIN
+.exportzp gameState, GAME_RUNNING, GAME_INIT, GAME_DEAD, GAME_PAUSE, GAME_TITLE, GAME_PRELEVEL, GAME_WIN, GAME_CONVO
 .export frame, ppu_address_tile
 
 .segment "ZEROPAGE"
@@ -20,6 +20,7 @@ GAME_PAUSE=$03
 GAME_TITLE=$04
 GAME_PRELEVEL=$05
 GAME_WIN=$06
+GAME_CONVO=$07
 
 ;
 ; iNES header

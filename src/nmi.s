@@ -5,7 +5,8 @@
 .export palette, nmi, oam
 .exportzp nmi_ready, nmi_count, nmi_mask, nmi_scroll
 
-.import frame, FamiToneUpdate
+.import frame, FamiToneUpdate, convoNmi
+.importzp GAME_CONVO, gameState 
 
 .segment "ZEROPAGE"
 nmi_lock:       .res 1 ; prevents NMI re-entry
@@ -69,6 +70,11 @@ nmi:
 		inx
 		cpx #32
 		bcc :-
+	lda gameState 
+	cmp #GAME_CONVO
+	bne :+
+		jsr convoNmi
+	:
 	; set scroll registers to 0
 	lda $2000
 	lda #$00
@@ -82,6 +88,13 @@ nmi:
 	ora nmi_mask 
 	sta $2001
 	; flag PPU update complete
+	lda gameState 
+	cmp #GAME_CONVO
+	bne :+
+		; Use 8x16 sprites
+		lda #%10101000
+		sta $2000
+	:
 	ldx #0
 	stx nmi_ready
 	jsr FamiToneUpdate

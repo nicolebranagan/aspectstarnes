@@ -3,8 +3,9 @@
 .importzp enemy_x, enemy_y, enemy_asp, enemy_face, enemy_attr, lives
 .importzp bulletx, bullety, bulletasp
 .importzp seed
-.import palette, clear_nametable, ppu_address_tile, gamepad_poll, game_preload, oam, draw_friend, enemy_draw, bullet_draw
+.import palette, clear_nametable, ppu_address_tile, gamepad_poll, game_preload, draw_friend, enemy_draw, bullet_draw
 .import FamiToneMusicPlay, FamiToneSfxPlay, FamiToneMusicStop
+.import convoInit
 
 .export title_init, title_update, write_text_at_x_y, pointer 
 
@@ -337,13 +338,14 @@ chase_update:
         and #PAD_START
         bne :+
         jsr FamiToneMusicStop
-        lda #$04
-        ldx #$00
-        jsr FamiToneSfxPlay
-        lda #$03
-        sta lives
-        lda firstLevel
-        jmp game_preload
+        ;lda #$04
+        ;ldx #$00
+        ;jsr FamiToneSfxPlay
+        ;lda #$03
+        ;sta lives
+        ;lda firstLevel
+        ;jmp game_preload
+        jmp convoInit
     :
     lda gamepad
     and #PAD_SELECT
