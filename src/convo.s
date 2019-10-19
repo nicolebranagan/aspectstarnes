@@ -53,8 +53,6 @@ convoInit:
     sta nmi_scroll
     sta phraseCount
     sta convoDone
-    lda #$20
-    sta byteToSay 
     ldx #0
 	: ; clear sprites
 		sta oam, X
@@ -73,6 +71,8 @@ convoInit:
 		inx
 		cpx #32
 		bcc :-
+    lda #$20
+    sta byteToSay 
     jsr clear_nametable
     jsr loadConvo
     lda #$01
