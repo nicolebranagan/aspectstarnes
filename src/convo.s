@@ -275,8 +275,13 @@ handleInput:
         jmp goToLevel
     :
     lda convoDone 
-    beq :+
-        rts
+    beq :++
+        lda gamepad 
+        and #PAD_A 
+        beq :+
+            jmp goToLevel
+        :
+        rts 
     :
     lda gamepad
     and #PAD_A
