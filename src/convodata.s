@@ -7,29 +7,33 @@ facedata:
 .word face1
 
 convo1:
-    .asciiz "Hey this is a test"
-    .asciiz "phrase, now with"
-    .asciiz "punctuation!"
+    .asciiz "My name is Nicole."
+    .asciiz "I live in this palace,"
+    .asciiz "with my girlfriend"
+    .asciiz "Princess Mary."
     .byte $ff
-    .asciiz "Oh my, Nicole! You"
-    .asciiz "managed to do the"
-    .asciiz "obvious!"
+    .asciiz "Nicole you know I'm very"
+    .asciiz "busy. If you're bored,"
+    .asciiz "go clean the basement"
+    .asciiz "or something."
     .byte $ff
-    .asciiz "Haha I bet that was"
-    .asciiz "sarcastic"
+    .asciiz "That sounded boring, but"
+    .asciiz "I decided to ask my "
+    .asciiz "stuffed animal Zip."
+    .asciiz "She's not sentient."
     .byte $ff
-    .asciiz "I'm not keeping track"
-    .asciiz "of who's saying what."
+    .asciiz "You should definitely"
+    .asciiz "take a look downstairs!"
+    .asciiz "Just stop bothering me,"
+    .asciiz "okay?"
     .byte $ff
-    .asciiz "I'm a stuffed animal"
-    .asciiz "So I shouldn't be"
-    .asciiz "saying anything!"
+    .asciiz "Zip isn't very nice"
+    .asciiz "sometimes."
     .byte $ff, $ff
 
 face1:
     .byte $00,$ff
     .byte $01,$ff
-    .byte $02,$ff
     .byte $00,$ff
     .byte $03,$ff
     .byte $00,$ff

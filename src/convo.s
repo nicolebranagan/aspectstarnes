@@ -253,10 +253,13 @@ writeLine:
         lda (master_ptr),Y 
     :
     cmp #$FF 
-    beq :+
+    beq :++
         sta byteToSay
         inc byteX 
         inc currentOffset
+        bne :+
+            inc master_ptr+1
+        :
     :
     bne :+
         lda #$20 
@@ -285,16 +288,19 @@ handleInput:
     :
     lda gamepad
     and #PAD_A
-    beq :++
+    beq @padAdone
         ldy currentOffset 
         lda (master_ptr),Y 
         cmp #$FF
-        bne :++
+        bne @padAdone
         inc currentOffset
-        iny
+        iny 
+        bne :+
+            inc master_ptr+1
+        :
         lda (master_ptr),Y 
         cmp #$FF
-        beq :+++
+        beq @convoDone
         inc phraseCount
         ldx phraseCount 
         lda #STARTY
@@ -304,9 +310,9 @@ handleInput:
             dex 
             bne :-
         sta byteY 
-    :
+    @padAdone:
     rts 
-    :
+    @convoDone:
         lda #$01
         sta convoDone
     rts 
