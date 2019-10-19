@@ -2,11 +2,11 @@
 
 .segment "RODATA"
 convoperlevel:
-.byte $00,$01,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+.byte $00,$01,$FF,$02,$FF,$FF,$FF,$FF,$FF,$FF
 convodata:
-.word convo1, convo2
+.word convo4, convo2, convo3, convo4
 facedata:
-.word face1 , face2
+.word face4 , face2 , face3 , face4
 
 convo1:
     .asciiz "My name is Nicole."
@@ -63,12 +63,123 @@ face1:
     .byte $ff
 
 convo2:
-    .asciiz "My name isn't Nicole."
-    .asciiz "I don't live in this palace,"
-    .asciiz "with my girlfriend"
-    .asciiz "Princess Mary."
-    .byte $ff, $ff
+    .asciiz "There sure are a lot of"
+    .asciiz "mice here..."
+    .byte $ff
+    .asciiz "Maybe I should ask the"
+    .asciiz "Princess what to do"
+    .asciiz "about them all."
+    .byte $ff
+    .asciiz "Isn't she busy?"
+    .asciiz "Can't you take care of"
+    .asciiz "them yourself?"
+    .byte $ff
+    .asciiz "Good call, Zip!"
+    .asciiz "Those mice are no match"
+    .asciiz "for a well trained cat!"
+    .byte $ff
+    .asciiz "So I should do a half"
+    .asciiz "decent job at least,"
+    .asciiz "right?"
+    .byte $ff,$ff
 
 face2:
+    .byte $00,$03
     .byte $00,$00
+    .byte $03,$ff
+    .byte $00,$02
+    .byte $00,$07
+    .byte $ff
+
+convo3:
+    .asciiz "Hey Nicole, look over"
+    .asciiz "here, behind this wall!"
+    .byte $ff
+    .asciiz "How'd you manage to see"
+    .asciiz "that from within my"
+    .asciiz "pocket, Zip--"
+    .byte $ff
+    .asciiz "Holy crap! It's an"
+    .asciiz "entire hidden base!"
+    .byte $ff
+    .asciiz "We're in trouble now!"
+    .asciiz "The mice have joined"
+    .asciiz "with the birds to"
+    .asciiz "wipe out all felinity!"
+    .byte $ff
+    .asciiz "And only I can save"
+    .asciiz "the day!"
+    .byte $ff
+    .asciiz "Well, cats had a good"
+    .asciiz "run."
+    .byte $ff, $ff 
+
+face3:
+    .byte $03,$ff
+    .byte $00,$07 
+    .byte $00,$01
+    .byte $03,$ff 
+    .byte $00,$02
+    .byte $03,$ff
+    .byte $ff
+
+convo4:
+    .asciiz "Well, Zip, we fought off"
+    .asciiz "the birds, but who could"
+    .asciiz "be behind all of this?"
+    .byte $ff 
+    .asciiz "Maybe it's just rational"
+    .asciiz "self-interest; we do eat"
+    .asciiz "mice and birds, after"
+    .asciiz "all."
+    .byte $ff
+    .asciiz "No, no, there has to be"
+    .asciiz "someone behind this..."
+    .byte $ff
+    .asciiz "Wan-wan!"
+    .byte $ff
+    .asciiz "Oh my gosh! The dog"
+    .asciiz "aliens from Sirius, the"
+    .asciiz "dog star! Of course!"
+    .byte $ff
+    .asciiz "We're not from Sirius,"
+    .asciiz "we're from Vega V!"
+    .byte $ff
+    .asciiz "But... that has nothing"
+    .asciiz "to do with dogs. I"
+    .asciiz "don't get it."
+    .byte $ff
+    .asciiz "Look. You may have"
+    .asciiz "ruined our plans here,"
+    .asciiz "but we're still going to"
+    .asciiz "take over the world!"
+    .byte $ff
+    .asciiz "But I live in the world!"
+    .byte $ff
+    .asciiz "Too bad!"
+    .byte $ff
+    .asciiz "We'll be hiding in the"
+    .asciiz "one place that hasn't"
+    .asciiz "been corrupted by"
+    .asciiz "cat-ipalism..."
+    .byte $ff
+    .asciiz "SPACE!"
+    .asciiz " "
+    .asciiz " "
+    .asciiz "Wan-wan!"
+    .byte $ff,$ff
+
+face4:
+    .byte $00,$00
+    .byte $03,$ff
+    .byte $00,$03
+    .byte $02,$08
+    .byte $00,$01
+    .byte $02,$0b
+    .byte $00,$07
+    .byte $02,$0a 
+    .byte $00,$01
+    .byte $02,$08
+    .byte $02,$0a
+    .byte $02,$08
     .byte $ff

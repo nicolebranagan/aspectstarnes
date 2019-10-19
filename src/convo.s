@@ -396,6 +396,10 @@ handleInput:
         bne :+
             jsr clearScreen
         :
+        cpx #$0a
+        bne :+
+            jsr clearScreen
+        :
         txa 
         :
             sec 
