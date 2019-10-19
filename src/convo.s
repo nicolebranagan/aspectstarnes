@@ -36,9 +36,26 @@ testConvo:
     .asciiz "ISNT THAT COOL"
     .byte $ff
     .asciiz "AND ANOTHER ONE TOO"
+    .byte $ff
+    .asciiz "HOW MANY CAN WE FIT"
+    .asciiz "AT ONCE"
+    .byte $ff
+    .asciiz "AT LEAST 4 I WOULD"
+    .asciiz "HOPE"
+    .byte $ff
+    .asciiz "IMPLEMENT SOME"
+    .asciiz "PUNCTUATION"
+    .asciiz "YOU LAZY NYA"
+    .byte $ff
+    .asciiz "I DO WHAT I WANT"
     .byte $ff, $ff
 testFaces:
-    .byte $00,$ff,$01,$ff
+    .byte $00,$ff
+    .byte $01,$ff
+    .byte $02,$ff
+    .byte $00,$ff
+    .byte $03,$ff
+    .byte $00,$ff
 
 STARTX=$06
 STARTY=$02
