@@ -13,9 +13,15 @@ convo1:
     .asciiz "Princess Mary."
     .byte $ff
     .asciiz "Nicole you know I'm very"
-    .asciiz "busy. If you're bored,"
-    .asciiz "go clean the basement"
-    .asciiz "or something."
+    .asciiz "busy."
+    .asciiz " "
+    .asciiz " "
+    .asciiz "*gunfire*"
+    .byte $ff
+    .asciiz " "
+    .asciiz "If you're bored, why not"
+    .asciiz "try cleaning the palace"
+    .asciiz "basement or something."
     .byte $ff
     .asciiz "That sounded boring, but"
     .asciiz "I decided to ask my "
@@ -31,12 +37,25 @@ convo1:
     .asciiz "sometimes."
     .asciiz "But I like her anyways."
     .asciiz "Let's go!"
+    .byte $ff 
+    .asciiz "And be on the lookout for"
+    .asciiz "mice. They're the sworn"
+    .asciiz "enemy of all cat-kind,"
+    .asciiz "after all."
+    .byte $ff
+    .asciiz "Oh and Nicole, remember"
+    .asciiz "you can only shoot an"
+    .asciiz "enemy with the same"
+    .asciiz "aspect as you!"
     .byte $ff, $ff
 
 face1:
     .byte $00,$00
+    .byte $01,$06
     .byte $01,$04
     .byte $00,$01
     .byte $03,$ff
     .byte $00,$02
+    .byte $00,$03
+    .byte $03,$ff
     .byte $ff

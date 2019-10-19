@@ -125,11 +125,42 @@ convoUpdate:
 	sta	nmi_ready
     rts 
 
+clearScreen:
+    lda #STARTX
+    sta byteX
+    lda #STARTY
+    sta byteY 
+    lda #$00
+	sta $2001
+    jsr clear_nametable 
+    ldx #0
+	: ; clear sprites
+		sta oam, X
+		inx
+        sta oam, X
+		inx
+        sta oam, X
+		inx
+        sta oam, X
+		inx
+		bne :-
+    rts 
+
 writeFace:
     lda #$0E
     sta faceY 
     lda #$00
     sta temp 
+    lda #$00
+        :
+        clc 
+        adc #$05 
+        cmp phraseCount 
+        bcc :-
+        beq :-
+    sec 
+    sbc #$05
+    sta temp
     ldx #$00
     :
         txa 
@@ -297,9 +328,12 @@ drawSingleFaceSprite:
 writeLine:
     ldy currentOffset   
     lda (master_ptr),Y 
-    bne :+
+    bne :++
         inc byteY 
         inc currentOffset
+        bne :+
+            inc master_ptr+1
+        :
         lda #STARTX 
         sta byteX 
         iny     
@@ -356,6 +390,17 @@ handleInput:
         beq @convoDone
         inc phraseCount
         ldx phraseCount 
+        cpx #$05 
+        bne :+
+            jsr clearScreen
+        :
+        txa 
+        :
+            sec 
+            sbc #$05
+        bcs :-
+        adc #$05
+        tax 
         lda #STARTY
         :
             clc 
