@@ -31,23 +31,23 @@ convo_palette:
 .byte $0F,$09,$14,$20 ; sp3 
 
 testConvo:
-    .asciiz "HEY THIS IS A TEST"
-    .asciiz "PHRASE"
-    .asciiz "ISNT THAT COOL"
+    .asciiz "Hey this is a test"
+    .asciiz "phrase, now with"
+    .asciiz "punctuation!"
     .byte $ff
-    .asciiz "AND ANOTHER ONE TOO"
+    .asciiz "Oh my, Nicole! You"
+    .asciiz "managed to do the"
+    .asciiz "obvious!"
     .byte $ff
-    .asciiz "HOW MANY CAN WE FIT"
-    .asciiz "AT ONCE"
+    .asciiz "Haha I bet that was"
+    .asciiz "sarcastic"
     .byte $ff
-    .asciiz "AT LEAST 4 I WOULD"
-    .asciiz "HOPE"
+    .asciiz "I'm not keeping track"
+    .asciiz "of who's saying what."
     .byte $ff
-    .asciiz "IMPLEMENT SOME"
-    .asciiz "PUNCTUATION"
-    .asciiz "YOU LAZY NYA"
-    .byte $ff
-    .asciiz "I DO WHAT I WANT"
+    .asciiz "I'm a stuffed animal"
+    .asciiz "So I shouldn't be"
+    .asciiz "saying anything!"
     .byte $ff, $ff
 testFaces:
     .byte $00,$ff
