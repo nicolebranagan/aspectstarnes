@@ -2,7 +2,7 @@
 .importzp FACING_LEFT, FACING_RIGHT, last_gamepad, nmi_mask, PAD_SELECT
 .importzp enemy_x, enemy_y, enemy_asp, enemy_face, enemy_attr, lives
 .importzp bulletx, bullety, bulletasp
-.importzp seed
+.importzp seed, currentLevel
 .import palette, clear_nametable, ppu_address_tile, gamepad_poll, game_preload, draw_friend, enemy_draw, bullet_draw
 .import FamiToneMusicPlay, FamiToneSfxPlay, FamiToneMusicStop
 .import convoInit
@@ -341,10 +341,10 @@ chase_update:
         ;lda #$04
         ;ldx #$00
         ;jsr FamiToneSfxPlay
-        ;lda #$03
-        ;sta lives
-        ;lda firstLevel
-        ;jmp game_preload
+        lda #$03
+        sta lives
+        lda firstLevel
+        sta currentLevel
         jmp convoInit
     :
     lda gamepad

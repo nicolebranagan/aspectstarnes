@@ -148,6 +148,14 @@ game_preload:
 		inx 
 		cpx #$04
 		bne :-
+	ldx #0
+	:; store sprite palettes in palette
+		lda sprite_palette,X  
+		sta palette+16,X 
+		iny 
+		inx 
+		cpy #32
+		bcc :-
 	lda #$0F
 	sta palette+$10 ; clear background color
 	jsr clear_nametable

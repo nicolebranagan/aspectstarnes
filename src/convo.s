@@ -1,6 +1,9 @@
 .importzp gameState, pointer, GAME_CONVO, nmi_ready, nmi_scroll, nmi_mask
+.importzp PAD_A, gamepad, currentLevel, last_gamepad, PAD_START
 .export convoUpdate, convoInit, convoNmi
 .import FamiToneMusicPlay, clear_nametable, oam, ppu_address_tile, palette
+.import FamiToneMusicStop, FamiToneSfxPlay
+.import gamepad_poll, game_preload
 
 .segment "ZEROPAGE"
 master_ptr:     .res 2
@@ -12,6 +15,9 @@ faceX:          .res 1
 faceY:          .res 1
 currentFace:    .res 1
 faceTile:       .res 1
+phraseCount:    .res 1
+temp:           .res 1
+convoDone:      .res 1
 
 .segment "RODATA"
 convo_palette:
@@ -29,6 +35,10 @@ testConvo:
     .asciiz "PHRASE"
     .asciiz "ISNT THAT COOL"
     .byte $ff
+    .asciiz "AND ANOTHER ONE TOO"
+    .byte $ff, $ff
+testFaces:
+    .byte $00,$ff,$01,$ff
 
 STARTX=$06
 STARTY=$02
@@ -48,6 +58,8 @@ convoInit:
 	sta $2001
     sta nmi_mask 
     sta nmi_scroll
+    sta phraseCount
+    sta convoDone
     ldx #0
 	: ; clear sprites
 		sta oam, X
@@ -89,6 +101,7 @@ convoNmi:
 convoUpdate:
     jsr writeLine
     jsr writeFace
+    jsr handleInput
     lda #$01
 	sta	nmi_ready
     rts 
@@ -96,9 +109,30 @@ convoUpdate:
 writeFace:
     lda #$0E
     sta faceY 
-    lda #$01
-    sta currentFace 
-    jsr drawFace
+    lda #$00
+    sta temp 
+    ldx #$00
+    :
+        txa 
+        pha 
+        lda temp
+        asl 
+        tax 
+        lda testFaces,X 
+        sta currentFace 
+        pla 
+        tax 
+        jsr drawFace
+        lda #$18
+        clc 
+        adc faceY 
+        sta faceY
+        inc temp 
+        lda temp 
+        sec 
+        sbc #$01
+        cmp phraseCount 
+        bcc :-
     rts 
 
 .segment "RODATA"
@@ -117,7 +151,6 @@ drawFace:
     tay 
     lda faces,Y 
     sta faceTile 
-    ldx #$00
     jsr drawSingleFaceSprite
     inc faceTile 
     inc faceTile 
@@ -212,3 +245,53 @@ writeLine:
         sta byteToSay
     :
     rts 
+
+handleInput:
+    jsr gamepad_poll
+    lda gamepad 
+    and #PAD_START
+    beq :+
+        lda last_gamepad 
+        and #PAD_START 
+        bne :+
+        jmp goToLevel
+    :
+    lda convoDone 
+    beq :+
+        rts
+    :
+    lda gamepad
+    and #PAD_A
+    beq :++
+        ldy currentOffset 
+        lda (master_ptr),Y 
+        cmp #$FF
+        bne :++
+        inc currentOffset
+        iny
+        lda (master_ptr),Y 
+        cmp #$FF
+        beq :+++
+        inc phraseCount
+        ldx phraseCount 
+        lda #STARTY
+        :
+            clc 
+            adc #$05
+            dex 
+            bne :-
+        sta byteY 
+    :
+    rts 
+    :
+        lda #$01
+        sta convoDone
+    rts 
+
+goToLevel:
+    jsr FamiToneMusicStop
+    lda #$04
+    ldx #$00
+    jsr FamiToneSfxPlay
+    lda currentLevel
+    jmp game_preload
