@@ -1,12 +1,15 @@
 .importzp gameState, pointer, GAME_CONVO, nmi_ready, nmi_scroll, nmi_mask
 .importzp PAD_A, gamepad, currentLevel, last_gamepad, PAD_START
+.exportzp currentConvo
 .export convoUpdate, convoInit, convoNmi
 .import FamiToneMusicPlay, clear_nametable, oam, ppu_address_tile, palette
 .import FamiToneMusicStop, FamiToneSfxPlay
 .import gamepad_poll, game_preload
+.import convodata, facedata
 
 .segment "ZEROPAGE"
 master_ptr:     .res 2
+currentConvo:   .res 1
 currentOffset:  .res 1
 byteToSay:      .res 1
 byteX:          .res 1
@@ -19,6 +22,9 @@ phraseCount:    .res 1
 temp:           .res 1
 convoDone:      .res 1
 
+.segment "BSS"
+faceStorage:    .res 100
+
 .segment "RODATA"
 convo_palette:
 .byte $0F,$30,$16,$00 ; bg0 title text
@@ -30,42 +36,11 @@ convo_palette:
 .byte $0F,$11,$36,$31 ; sp2 
 .byte $0F,$09,$14,$20 ; sp3 
 
-testConvo:
-    .asciiz "Hey this is a test"
-    .asciiz "phrase, now with"
-    .asciiz "punctuation!"
-    .byte $ff
-    .asciiz "Oh my, Nicole! You"
-    .asciiz "managed to do the"
-    .asciiz "obvious!"
-    .byte $ff
-    .asciiz "Haha I bet that was"
-    .asciiz "sarcastic"
-    .byte $ff
-    .asciiz "I'm not keeping track"
-    .asciiz "of who's saying what."
-    .byte $ff
-    .asciiz "I'm a stuffed animal"
-    .asciiz "So I shouldn't be"
-    .asciiz "saying anything!"
-    .byte $ff, $ff
-testFaces:
-    .byte $00,$ff
-    .byte $01,$ff
-    .byte $02,$ff
-    .byte $00,$ff
-    .byte $03,$ff
-    .byte $00,$ff
-
 STARTX=$06
 STARTY=$02
 
 .segment "CODE"
 convoInit:
-    lda #<testConvo
-    sta master_ptr 
-    lda #>testConvo
-    sta master_ptr+1
     lda #GAME_CONVO 
     sta gameState 
     lda #$04
@@ -96,12 +71,38 @@ convoInit:
 		cpx #32
 		bcc :-
     jsr clear_nametable
+    jsr loadConvo
     lda #$01
 	sta	nmi_ready
     lda #STARTX
     sta byteX
     lda #STARTY
     sta byteY 
+    rts 
+
+loadConvo:
+    lda currentConvo 
+    asl 
+    tax 
+    lda convodata,X 
+    sta master_ptr 
+    lda convodata+1,X 
+    sta master_ptr+1 
+    lda facedata,X 
+    sta pointer 
+    lda facedata+1,X 
+    sta pointer+1 
+    ldy #$00
+    :
+        lda (pointer),Y 
+        sta faceStorage,Y 
+        iny 
+        lda (pointer),Y 
+        sta faceStorage,Y 
+        iny 
+        lda (pointer),Y 
+        cmp #$FF
+        bne :-
     rts 
 
 convoNmi:
@@ -135,7 +136,7 @@ writeFace:
         lda temp
         asl 
         tax 
-        lda testFaces,X 
+        lda faceStorage,X 
         sta currentFace 
         pla 
         tax 
