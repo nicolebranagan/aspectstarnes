@@ -1,15 +1,17 @@
-.export convodata, facedata
+.export convodata, facedata, convoperlevel
 
 .segment "RODATA"
+convoperlevel:
+.byte $00,$01,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 convodata:
-.word convo1 
+.word convo1, convo2
 facedata:
-.word face1
+.word face1 , face2
 
 convo1:
     .asciiz "My name is Nicole."
     .asciiz "I live in this palace,"
-    .asciiz "with my girlfriend"
+    .asciiz "with my good friend"
     .asciiz "Princess Mary."
     .byte $ff
     .asciiz "Nicole you know I'm very"
@@ -58,4 +60,15 @@ face1:
     .byte $00,$02
     .byte $00,$03
     .byte $03,$ff
+    .byte $ff
+
+convo2:
+    .asciiz "My name isn't Nicole."
+    .asciiz "I don't live in this palace,"
+    .asciiz "with my girlfriend"
+    .asciiz "Princess Mary."
+    .byte $ff, $ff
+
+face2:
+    .byte $00,$00
     .byte $ff

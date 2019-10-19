@@ -609,13 +609,6 @@ no_enemy_left:
     lda #GAME_WIN 
     sta gameState
     jsr FamiToneMusicStop 
-    txa 
-    pha 
-    lda #$04
-    ldx #$00
-    jsr FamiToneSfxPlay
-    pla 
-    txa 
     inc lives
     inc lives 
     inc lives

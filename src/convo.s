@@ -53,6 +53,8 @@ convoInit:
     sta nmi_scroll
     sta phraseCount
     sta convoDone
+    lda #$20
+    sta byteToSay 
     ldx #0
 	: ; clear sprites
 		sta oam, X
