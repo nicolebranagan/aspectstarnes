@@ -29,12 +29,14 @@ convo1:
     .byte $ff
     .asciiz "Zip isn't very nice"
     .asciiz "sometimes."
+    .asciiz "But I like her anyways."
+    .asciiz "Let's go!"
     .byte $ff, $ff
 
 face1:
-    .byte $00,$ff
-    .byte $01,$ff
-    .byte $00,$ff
+    .byte $00,$00
+    .byte $01,$04
+    .byte $00,$01
     .byte $03,$ff
-    .byte $00,$ff
+    .byte $00,$02
     .byte $ff

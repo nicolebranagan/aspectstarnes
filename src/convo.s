@@ -17,6 +17,7 @@ byteY:          .res 1
 faceX:          .res 1
 faceY:          .res 1
 currentFace:    .res 1
+currentSubFace: .res 1
 faceTile:       .res 1
 phraseCount:    .res 1
 temp:           .res 1
@@ -138,6 +139,9 @@ writeFace:
         tax 
         lda faceStorage,X 
         sta currentFace 
+        inx 
+        lda faceStorage,X 
+        sta currentSubFace 
         pla 
         tax 
         jsr drawFace
@@ -155,7 +159,7 @@ writeFace:
 
 .segment "RODATA"
 faces:
-    .byte $81, $89, $91, $99
+    .byte $a1, $a9, $b1, $b9
 facePalettes:
     .byte $00, $01, $02, $03
 
@@ -167,6 +171,11 @@ drawFace:
     sta faceX
     lda currentFace 
     tay 
+    lda currentSubFace 
+    cmp #$FF
+    beq :+
+        jsr drawSubFace
+    :
     lda faces,Y 
     sta faceTile 
     jsr drawSingleFaceSprite
@@ -224,6 +233,50 @@ drawFace:
     adc #$08
     sta faceX 
     jsr drawSingleFaceSprite
+    rts 
+
+drawSubFace:
+    txa 
+    pha 
+    lda currentSubFace 
+    asl 
+    asl 
+    clc 
+    adc #$71
+    sta currentSubFace 
+    pla 
+    tax 
+
+    lda faceY 
+    adc #$08
+    sta oam,X 
+    inx 
+    lda currentSubFace 
+    sta oam,X 
+    inx 
+    lda facePalettes,Y 
+    sta oam,X 
+    inx 
+    lda #(START_FACE_X+$08)
+    sta oam,X 
+    inx 
+
+    lda faceY 
+    adc #$08
+    sta oam,X 
+    inx 
+    inc currentSubFace
+    inc currentSubFace
+    lda currentSubFace 
+    sta oam,X 
+    inx 
+    lda facePalettes,Y 
+    sta oam,X 
+    inx 
+    lda #(START_FACE_X+$10)
+    sta oam,X 
+    inx 
+
     rts 
 
 drawSingleFaceSprite:
