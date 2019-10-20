@@ -36,10 +36,10 @@ convo_palette:
 .byte $0F,$0F,$0F,$0F ; bg1 
 .byte $0F,$0F,$1F,$0F ; bg2 
 .byte $0F,$0F,$0F,$0F ; bg3 
-.byte $0F,$06,$37,$30 ; sp0 
+.byte $0F,$16,$37,$30 ; sp0 
 .byte $0F,$15,$37,$30 ; sp1 
 .byte $0F,$11,$36,$31 ; sp2 
-.byte $0F,$09,$14,$20 ; sp3 
+.byte $0F,$19,$14,$20 ; sp3 
 
 music_by_convo:
 .byte $04,$04,$05,$05,$04
