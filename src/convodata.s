@@ -219,8 +219,8 @@ convo5:
     .byte $ff
     .asciiz "For the empire, the day"
     .asciiz "I beat the dog aliens"
-    .asciiz "from Vega V was the most"
-    .asciiz "important day of all!"
+    .asciiz "from Vega V was a very"
+    .asciiz "important day!"
     .byte $ff
     .asciiz "But for me, it was..."
     .asciiz " "

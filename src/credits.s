@@ -2,7 +2,7 @@
 .import oam, ppu_address_tile
 .import FamiToneMusicPlay, write_text_at_x_y, clear_nametable, clear_lower_nametable, FamiToneMusicStop
 .export creditsInit, creditsUpdate
-.import drawFace, gamepad_poll, title_init
+.import drawFace, gamepad_poll, title_init, palette
 .importzp startFaceX, currentFace, currentSubFace, faceY, gamepad, PAD_START
 
 .segment "ZEROPAGE"
@@ -10,6 +10,8 @@ waitTimer:      .res 1
 scrollTimer:    .res 1
 
 .segment "RODATA"
+text_palette:
+    .byte $0F,$30,$16,$00 ; bg0 title text
 line2:
     .asciiz "By Nicole Express 2019"
 line3:
@@ -43,6 +45,13 @@ creditsInit:
         sta oam, X
 		inx
 		bne :-
+    ldx #0
+	:; store palettes in palette
+		lda text_palette, X
+		sta palette, X
+		inx
+		cpx #04
+		bcc :-
 
     jsr write_logo
 
