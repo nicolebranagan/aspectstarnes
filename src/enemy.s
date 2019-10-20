@@ -188,7 +188,7 @@ update_single_enemy:
     :
 
     jsr check_enemy_aspect
-
+    jsr move_enemy_out_of_wall
     txa 
     pha 
     lda enemy_attr,X 
@@ -291,6 +291,37 @@ enemy_move:
     cmp #FACING_LEFT
     bne :+
         dec enemy_x,X 
+        enemSolidX #$F8
+        bcc :+
+        inc enemy_x,X  
+    :
+    rts 
+
+move_enemy_out_of_wall:
+    lda enemy_face,X
+    cmp #FACING_DOWN
+    bne :+
+        enemSolidY #$08
+        bcc :+
+        dec enemy_y,X
+    :
+    lda enemy_face,X
+    cmp #FACING_UP
+    bne :+
+        enemSolidY #$F8
+        bcc :+
+        inc enemy_y,X
+    :
+    lda enemy_face,X
+    cmp #FACING_RIGHT
+    bne :+
+        enemSolidX #$08
+        bcc :+
+        dec enemy_x,X
+    :
+    lda enemy_face,X
+    cmp #FACING_LEFT
+    bne :+
         enemSolidX #$F8
         bcc :+
         inc enemy_x,X  
