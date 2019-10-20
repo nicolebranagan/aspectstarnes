@@ -37,6 +37,9 @@ convo_palette:
 .byte $0F,$11,$36,$31 ; sp2 
 .byte $0F,$09,$14,$20 ; sp3 
 
+music_by_convo:
+.byte $04,$04,$05,$05,$04
+
 STARTX=$06
 STARTY=$02
 
@@ -44,7 +47,8 @@ STARTY=$02
 convoInit:
     lda #GAME_CONVO 
     sta gameState 
-    lda #$04
+    ldx currentConvo 
+    lda music_by_convo,X 
     jsr FamiToneMusicPlay
     lda #$00
     sta currentOffset
