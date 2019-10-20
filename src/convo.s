@@ -6,6 +6,9 @@
 .import FamiToneMusicStop, FamiToneSfxPlay
 .import gamepad_poll, game_preload
 .import convodata, facedata
+.import creditsInit
+.exportzp startFaceX, currentFace, currentSubFace, faceY
+.export drawFace
 
 .segment "ZEROPAGE"
 master_ptr:     .res 2
@@ -22,6 +25,7 @@ faceTile:       .res 1
 phraseCount:    .res 1
 temp:           .res 1
 convoDone:      .res 1
+startFaceX:     .res 1
 
 .segment "BSS"
 faceStorage:    .res 100
@@ -85,6 +89,8 @@ convoInit:
     sta byteX
     lda #STARTY
     sta byteY 
+    lda #$10
+    sta startFaceX
     rts 
 
 loadConvo:
@@ -200,11 +206,9 @@ faces:
 facePalettes:
     .byte $00, $01, $02, $03
 
-START_FACE_X=$10
-
 .segment "CODE"
 drawFace:
-    lda #START_FACE_X
+    lda startFaceX
     sta faceX
     lda currentFace 
     tay 
@@ -239,7 +243,7 @@ drawFace:
     jsr drawSingleFaceSprite
     
     ; second row
-    lda #START_FACE_X
+    lda startFaceX
     sta faceX
     lda faces,Y 
     clc 
@@ -294,7 +298,9 @@ drawSubFace:
     lda facePalettes,Y 
     sta oam,X 
     inx 
-    lda #(START_FACE_X+$08)
+    lda startFaceX 
+    clc 
+    adc #$08
     sta oam,X 
     inx 
 
@@ -310,7 +316,9 @@ drawSubFace:
     lda facePalettes,Y 
     sta oam,X 
     inx 
-    lda #(START_FACE_X+$10)
+    lda startFaceX 
+    clc 
+    adc #$10
     sta oam,X 
     inx 
 
@@ -426,6 +434,11 @@ handleInput:
     rts 
 
 goToLevel:
+    lda currentConvo 
+    cmp #$04 
+    bne :+
+        jmp creditsInit
+    :
     jsr FamiToneMusicStop
     lda #$04
     ldx #$00

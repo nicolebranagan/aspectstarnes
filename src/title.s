@@ -5,7 +5,7 @@
 .importzp seed, currentLevel, currentConvo
 .import palette, clear_nametable, ppu_address_tile, gamepad_poll, game_preload, draw_friend, enemy_draw, bullet_draw
 .import FamiToneMusicPlay, FamiToneSfxPlay, FamiToneMusicStop
-.import convoInit, convoperlevel
+.import convoInit, convoperlevel, clear_lower_nametable, oam
 
 .export title_init, title_update, write_text_at_x_y, pointer 
 
@@ -66,9 +66,23 @@ title_init:
 		bcc :-
     stx seed+1
     jsr clear_nametable
+    jsr clear_lower_nametable
     jsr write_logo
     jsr draw_title
     jsr draw_grid
+
+    lda #$00
+    ldx #0
+	: ; clear sprites
+		sta oam, X
+		inx
+        sta oam, X
+		inx
+        sta oam, X
+		inx
+        sta oam, X
+		inx
+		bne :-
 
     lda #<PRESS_START
     sta pointer
@@ -264,6 +278,9 @@ train_update:
     lda gamepad 
     and #PAD_START
     beq :+
+        lda last_gamepad
+        and #PAD_START
+        bne :+
         jsr init_chase
     :
     lda #$01

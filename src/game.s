@@ -2,10 +2,10 @@
 .import palette, bullet_init, enemy_init, gamepad_poll, oam, bullet_fire, bullet_draw, bullet_update, enemy_init, enemy_draw, enemy_update, ppu_address_tile, title_update, write_text_at_x_y, title_init, level_data, convoUpdate
 .import FamiToneMusicPlay, FamiToneMusicStop, FamiToneMusicPause, FamiToneSfxPlay
 .importzp currentConvo
-.import convoInit, convoperlevel
+.import convoInit, convoperlevel, creditsUpdate
 
 .exportzp aspect, xpos, ypos, facing, FACING_DOWN, FACING_LEFT, FACING_RIGHT, FACING_UP, current_tile, moving, lives, currentLevel
-.export is_solid, get_map_tile_for_x_y, map_attributes, game_update, clear_nametable, draw_friend, game_preload, game_die
+.export is_solid, get_map_tile_for_x_y, map_attributes, game_update, clear_nametable, clear_lower_nametable, draw_friend, game_preload, game_die
 
 .segment "ZEROPAGE"
 xpos:			.res 1
@@ -236,7 +236,7 @@ FACING_RIGHT=$03
 
 .segment "RODATA"
 gameUpdate:
-	.word running_update, init_update, dead_update, pause_update, title_update, preload_update, win_update, convoUpdate
+	.word running_update, init_update, dead_update, pause_update, title_update, preload_update, win_update, convoUpdate, creditsUpdate
 
 .segment "CODE"
 game_update: 
@@ -885,6 +885,32 @@ clear_nametable:
 	; clear nametable
 	lda	$2002 ; reset latch
 	lda #$20
+	sta $2006
+	lda #$00
+	sta $2006
+	; empty nametable
+	lda #0
+	ldy #30 ; 30 rows
+	:
+		ldx #32 ; 32 columns
+		:
+			sta $2007
+			dex
+			bne :-
+		dey
+		bne :--
+	; set all attributes to 0
+	ldx #64 ; 64 bytes
+	:
+		sta $2007
+		dex
+		bne :-
+	rts	
+
+clear_lower_nametable:
+	; clear nametable
+	lda	$2002 ; reset latch
+	lda #$28
 	sta $2006
 	lda #$00
 	sta $2006

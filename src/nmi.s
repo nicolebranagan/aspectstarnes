@@ -90,7 +90,7 @@ nmi:
 	; flag PPU update complete
 	lda gameState 
 	cmp #GAME_CONVO
-	bne :+
+	bcc :+
 		; Use 8x16 sprites
 		lda #%10101000
 		sta $2000
