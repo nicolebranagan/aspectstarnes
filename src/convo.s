@@ -42,7 +42,7 @@ convo_palette:
 .byte $0F,$19,$14,$20 ; sp3 
 
 music_by_convo:
-.byte $04,$04,$05,$05,$04
+.byte $04,$04,$04,$05,$03
 
 STARTX=$06
 STARTY=$02
