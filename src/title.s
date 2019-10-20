@@ -5,7 +5,7 @@
 .importzp seed, currentLevel, currentConvo
 .import palette, clear_nametable, ppu_address_tile, gamepad_poll, game_preload, draw_friend, enemy_draw, bullet_draw
 .import FamiToneMusicPlay, FamiToneSfxPlay, FamiToneMusicStop
-.import convoInit
+.import convoInit, convoperlevel
 
 .export title_init, title_update, write_text_at_x_y, pointer 
 
@@ -342,7 +342,7 @@ chase_update:
         sta lives
         lda firstLevel
         sta currentLevel
-        lda #$00
+        lda convoperlevel
         sta currentConvo
         jmp convoInit
     :

@@ -4,9 +4,9 @@
 convoperlevel:
 .byte $00,$01,$FF,$02,$FF,$FF,$03,$FF,$FF,$04
 convodata:
-.word convo1, convo2, convo3, convo4
+.word convo1, convo2, convo3, convo4, convo5
 facedata:
-.word face1 , face2 , face3 , face4
+.word face1 , face2 , face3 , face4 , face5
 
 convo1:
     .asciiz "My name is Nicole."
@@ -182,4 +182,60 @@ face4:
     .byte $02,$08
     .byte $02,$0a
     .byte $02,$08
+    .byte $ff
+
+convo5:
+    .asciiz "I can't believe it!"
+    .asciiz "All of our minutes of"
+    .asciiz "scheming and planning"
+    .asciiz "ruined!"
+    .byte $ff
+    .asciiz "All I can say about"
+    .asciiz "this is..."
+    .asciiz " "
+    .asciiz "Wan-wan!"
+    .byte $ff
+    .asciiz "Wow, Zip, and to think"
+    .asciiz "I thought going to the"
+    .asciiz "basement would be"
+    .asciiz "boring!"
+    .byte $ff
+    .asciiz "Beginner's luck."
+    .asciiz "This is the first"
+    .asciiz "Aspect Star game, after"
+    .asciiz "all."
+    .byte $ff
+    .asciiz "I have no idea what"
+    .asciiz "you're talking about,"
+    .asciiz "Zip."
+    .byte $ff
+    .asciiz "An extraterrestrial"
+    .asciiz "invasion? That sounds"
+    .asciiz "terrifying!"
+    .byte $ff
+    .asciiz "You may have just"
+    .asciiz "saved the whole empire,"
+    .asciiz "Nicole!"
+    .byte $ff
+    .asciiz "For the empire, the day"
+    .asciiz "I beat the dog aliens"
+    .asciiz "from Vega V was the most"
+    .asciiz "important day of all!"
+    .byte $ff
+    .asciiz "But for me, it was..."
+    .asciiz " "
+    .asciiz "What day of the week"
+    .asciiz "is it again?"
+    .byte $ff, $ff
+
+face5:
+    .byte $02,$09
+    .byte $02,$08
+    .byte $00,$02
+    .byte $03,$ff
+    .byte $00,$00
+    .byte $01,$05
+    .byte $01,$04
+    .byte $00,$02
+    .byte $00,$07
     .byte $ff
