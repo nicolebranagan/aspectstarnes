@@ -440,6 +440,12 @@ goToLevel:
         jmp creditsInit
     :
     jsr FamiToneMusicStop
+    lda currentLevel
+    cmp #$09
+    bcc :+
+        inc currentConvo 
+        jmp convoInit
+    :
     lda #$04
     ldx #$00
     jsr FamiToneSfxPlay
