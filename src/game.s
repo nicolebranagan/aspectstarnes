@@ -3,6 +3,7 @@
 .import FamiToneMusicPlay, FamiToneMusicStop, FamiToneMusicPause, FamiToneSfxPlay
 .importzp currentConvo
 .import convoInit, convoperlevel, creditsUpdate
+.import cnrom_bank_switch
 
 .exportzp aspect, xpos, ypos, facing, FACING_DOWN, FACING_LEFT, FACING_RIGHT, FACING_UP, current_tile, moving, lives, currentLevel
 .export is_solid, get_map_tile_for_x_y, map_attributes, game_update, clear_nametable, clear_lower_nametable, draw_friend, game_preload, game_die
@@ -18,6 +19,7 @@ current_tile:	.res 1
 timer:			.res 1
 currentLevel:	.res 1
 lives:			.res 1
+probability: .res 1
 
 .segment "BSS"
 gamePointer:	.res 2
@@ -25,9 +27,9 @@ map:			.res 240
 
 .segment "RODATA"
 ROUND:
-.asciiz "LEVEL "
+.asciiz "LEVEL -1"
 LIFE_COUNT:
-.asciiz "   X "
+.asciiz "   X *"
 text_palette:
 .byte $0F,$30,$16,$00 ; bg0 title text
 level_palette:
@@ -69,6 +71,7 @@ level_palettes:
 .segment "CODE"
 game_init:
 	lda #$00
+	jsr cnrom_bank_switch
 	sta $2001
 	lda currentLevel
 	tax 
@@ -135,6 +138,7 @@ game_preload:
 	sta $2001
 	sta nmi_scroll
 	sta nmi_mask
+	sta probability
 	ldx #0
 	: ; clear sprites
 		sta oam, X
@@ -166,13 +170,9 @@ game_preload:
 	sta pointer 
 	lda #>ROUND
 	sta pointer+1
-	ldx #$0D
+	ldx #$0C
 	ldy #$0B
 	jsr write_text_at_x_y
-	lda currentLevel 
-	clc 
-	adc #$31
-	sta $2007
 
 	lda #<LIFE_COUNT
 	sta pointer 
@@ -181,10 +181,6 @@ game_preload:
 	ldx #$0D
 	ldy #$0E
 	jsr write_text_at_x_y
-	lda lives 
-	clc 
-	adc #$30
-	sta $2007
 
 	lda #GAME_PRELEVEL
 	sta gameState
@@ -204,7 +200,7 @@ game_preload:
 
 game_die:
 	jsr FamiToneMusicStop
-	dec lives 
+	; dec lives 
 	ldx #$00
 	lda #$02
 	jsr FamiToneSfxPlay
@@ -551,10 +547,9 @@ dead_update:
 	bne :+
 		lda #%11100001
 		sta nmi_mask
-		lda lives
-		beq :+
-			lda currentLevel
-			jmp game_preload
+		inc probability
+		lda currentLevel
+		jmp game_preload
 	:
 	lda timer 
 	cmp #$40
