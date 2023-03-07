@@ -315,11 +315,12 @@ chase_update:
             lda #$01
             sta aspect
         :
-        dec enemy_asp 
+        inc enemy_asp 
         lda enemy_asp
-        cmp #$00
+        cmp #$04
         bne :+
-            lda #$03
+            inc loopcount
+            lda #$01
             sta enemy_asp
         :
         lda enemy_asp 
@@ -401,6 +402,10 @@ chase_update:
         jsr bullet_draw
         jsr title_init
     :
+    lda aspect
+    and #$01
+    eor #$01
+    jsr cnrom_bank_switch
     lda #$01
 	sta	nmi_ready
     rts 
