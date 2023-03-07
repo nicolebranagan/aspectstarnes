@@ -21,10 +21,11 @@ currentLevel:	.res 1
 lives:			.res 1
 probability: .res 1
 alreadyInit: .res 1
+stillTimer: .res 1
 
 .segment "BSS"
 gamePointer:	.res 2
-map:			.res 240
+map:			.res 256
 
 .segment "RODATA"
 ROUND:
@@ -75,6 +76,7 @@ game_init:
 	jsr cnrom_bank_switch
 	sta $2001
 	sta probability
+	sta stillTimer
 	sta alreadyInit
 	lda currentLevel
 	tax 
@@ -311,6 +313,10 @@ init_update:
 	rts 
 
 running_update:
+	inc stillTimer
+	bne :+
+		jsr game_die
+	:
 	jsr check_player_aspect
 	jsr bullet_update
 	jsr enemy_update
@@ -326,6 +332,11 @@ running_update:
 	:
 	jsr gamepad_poll	; read gamepad
 	lda gamepad
+	beq :+
+		lda #$00
+		sta stillTimer
+		lda gamepad
+	:
 	and #PAD_A
 	beq :+
 		jsr bullet_fire
@@ -644,9 +655,12 @@ preload_update:
 	bne :++
 		lda alreadyInit
 		beq :+
+			jsr glitch_map_tile
+			jsr glitch_map_tile
 			jsr partial_game_init
 			jmp :++
 		:
+		jsr glitch_map_tile
 		jsr game_init
 	:
 	jsr draw_friend
@@ -1113,3 +1127,11 @@ draw_background:
 		cpx #$40
 		bcc :-
 	rts	
+
+glitch_map_tile:
+	jsr prng
+	tax
+	jsr prng
+	and #3
+	sta map,X
+	rts
