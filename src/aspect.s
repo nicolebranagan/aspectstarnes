@@ -6,7 +6,7 @@
 .import game_update, nmi, oam, title_init
 .import FamiToneInit, MusicData, FamiToneSfxInit, SfxData
 
-.exportzp gameState, GAME_RUNNING, GAME_INIT, GAME_DEAD, GAME_PAUSE, GAME_TITLE, GAME_PRELEVEL, GAME_WIN, GAME_CONVO, GAME_CREDITS
+.exportzp gameState, GAME_RUNNING, GAME_INIT, GAME_DEAD, GAME_PAUSE, GAME_TITLE, GAME_PRELEVEL, GAME_WIN, GAME_CONVO, GAME_CREDITS, GAME_SKULL
 .export frame, ppu_address_tile, cnrom_bank_switch
 
 .segment "ZEROPAGE"
@@ -22,6 +22,7 @@ GAME_PRELEVEL=$05
 GAME_WIN=$06
 GAME_CONVO=$07
 GAME_CREDITS=$08
+GAME_SKULL=$09
 
 ;
 ; iNES header
@@ -47,6 +48,8 @@ INES_SRAM   = 0 ; 1 = battery backed SRAM at $6000-7FFF
 .segment "TILES"
 .incbin "../gfx/bank0.chr"
 .incbin "../gfx/bank1.chr"
+.incbin "../skull/setA.nes"
+.incbin "../skull/setB.nes"
 
 ;
 ; vectors placed at top 6 bytes of memory area

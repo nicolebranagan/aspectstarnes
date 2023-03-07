@@ -57,8 +57,6 @@ def tile_to_nes(tile):
     nes.append(0)
   return nes
 
-tile = tile_to_nes(interlace(tileset[0])[0])
-
 setA = b''
 setB = b''
 
@@ -66,6 +64,14 @@ for tile in tileset:
   interlaced = interlace(tile)
   setA += tile_to_nes(interlaced[0])
   setB += tile_to_nes(interlaced[1])
+
+def pad_to_8k(set):
+  while (len(set) < 8192):
+    set += b'\0'
+  return set
+
+setA = pad_to_8k(setA)
+setB = pad_to_8k(setB)
 
 outfile1 = sys.argv[2]
 outfile2 = sys.argv[3]
