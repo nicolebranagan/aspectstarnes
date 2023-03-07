@@ -5,7 +5,7 @@
 .import convoInit, convoperlevel, creditsUpdate, skull_update
 .import cnrom_bank_switch, prng, skull_init
 
-.exportzp aspect, xpos, ypos, facing, FACING_DOWN, FACING_LEFT, FACING_RIGHT, FACING_UP, current_tile, moving, lives, currentLevel
+.exportzp aspect, xpos, ypos, facing, FACING_DOWN, FACING_LEFT, FACING_RIGHT, FACING_UP, current_tile, moving, lives, currentLevel, probability
 .export is_solid, get_map_tile_for_x_y, map_attributes, game_update, clear_nametable, clear_lower_nametable, draw_friend, game_preload, game_die
 
 .segment "ZEROPAGE"
@@ -76,7 +76,6 @@ game_init:
 	lda #$00
 	jsr cnrom_bank_switch
 	sta $2001
-	sta probability
 	sta stillTimer
 	sta alreadyInit
 	lda currentLevel

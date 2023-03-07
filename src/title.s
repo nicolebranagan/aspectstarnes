@@ -1,7 +1,7 @@
 .importzp nmi_ready, PAD_START, gamepad, GAME_TITLE, gameState, nmi_count, nmi_scroll, aspect, facing, moving, xpos, ypos
 .importzp FACING_LEFT, FACING_RIGHT, last_gamepad, nmi_mask, PAD_SELECT
 .importzp enemy_x, enemy_y, enemy_asp, enemy_face, enemy_attr, lives
-.importzp bulletx, bullety, bulletasp
+.importzp bulletx, bullety, bulletasp, probability
 .importzp seed, currentLevel, currentConvo
 .import palette, clear_nametable, ppu_address_tile, gamepad_poll, game_preload, draw_friend, enemy_draw, bullet_draw
 .import FamiToneMusicPlay, FamiToneSfxPlay, FamiToneMusicStop
@@ -367,6 +367,8 @@ chase_update:
         sta currentLevel
         lda convoperlevel
         sta currentConvo
+        lda #00
+        sta probability
         jmp convoInit
     :
     lda gamepad
