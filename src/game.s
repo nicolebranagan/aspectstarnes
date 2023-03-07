@@ -26,6 +26,7 @@ stillTimer: .res 1
 .segment "BSS"
 gamePointer:	.res 2
 map:			.res 256
+stored_palette: .res 16
 
 .segment "RODATA"
 ROUND:
@@ -89,7 +90,7 @@ game_init:
     ldy #0
 	:; store level palettes in palette
 		lda (pointer),Y 
-		sta palette,Y 
+		sta stored_palette,Y 
 		iny
 		cpy #16
 		bcc :-
@@ -129,17 +130,14 @@ partial_game_init:
 	pla 
 	asl
 	tax
-	lda level_palettes+1,X 
-	sta pointer+1 
-	lda level_palettes,X 
-	sta pointer 
-    ldy #0
+
+	ldy #0
 	:; store level palettes in palette
-		lda (pointer),Y 
+		lda stored_palette,Y 
 		sta palette,Y 
 		iny
 		cpy #16
-		bcc :-
+	bcc :-
 
 
 	jsr draw_background
@@ -657,6 +655,7 @@ preload_update:
 		beq :+
 			jsr glitch_map_tile
 			jsr glitch_map_tile
+			jsr glitch_palette
 			jsr partial_game_init
 			jmp :++
 		:
@@ -1134,4 +1133,15 @@ glitch_map_tile:
 	jsr prng
 	and #3
 	sta map,X
+	rts
+
+glitch_palette:
+	jsr prng
+	and #15
+	tax
+	jsr prng
+	cmp #$0d
+	beq :+
+		sta stored_palette,X
+	:
 	rts
