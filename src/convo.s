@@ -6,7 +6,7 @@
 .import FamiToneMusicStop, FamiToneSfxPlay
 .import gamepad_poll, game_preload
 .import convodata, facedata
-.import creditsInit
+.import creditsInit, cnrom_bank_switch
 .exportzp startFaceX, currentFace, currentSubFace, faceY
 .export drawFace
 
@@ -26,6 +26,7 @@ phraseCount:    .res 1
 temp:           .res 1
 convoDone:      .res 1
 startFaceX:     .res 1
+flickerMode:    .res 1
 
 .segment "BSS"
 faceStorage:    .res 100
@@ -56,6 +57,7 @@ convoInit:
     jsr FamiToneMusicPlay
     lda #$00
     sta currentOffset
+    sta flickerMode
 	sta $2001
     sta nmi_mask 
     sta nmi_scroll
@@ -105,8 +107,15 @@ loadConvo:
     sta pointer 
     lda facedata+1,X 
     sta pointer+1 
+
     ldy #$00
     :
+        lda (pointer),Y 
+        sta faceStorage,Y 
+        iny 
+        lda (pointer),Y 
+        sta faceStorage,Y 
+        iny 
         lda (pointer),Y 
         sta faceStorage,Y 
         iny 
@@ -133,9 +142,14 @@ convoUpdate:
     jsr writeLine
     jsr writeFace
     jsr handleInput
+    jsr handleFlicker
     lda #$01
 	sta	nmi_ready
     rts 
+
+handleFlicker:
+    lda flickerMode
+    jmp cnrom_bank_switch
 
 clearScreen:
     lda #STARTX
@@ -179,12 +193,16 @@ writeFace:
         pha 
         lda temp
         asl 
+        asl
         tax 
         lda faceStorage,X 
         sta currentFace 
         inx 
         lda faceStorage,X 
         sta currentSubFace 
+        inx 
+        lda faceStorage,X
+        sta flickerMode
         pla 
         tax 
         jsr drawFace
