@@ -5,7 +5,7 @@
 .importzp seed, currentLevel, currentConvo
 .import palette, clear_nametable, ppu_address_tile, gamepad_poll, game_preload, draw_friend, enemy_draw, bullet_draw
 .import FamiToneMusicPlay, FamiToneSfxPlay, FamiToneMusicStop
-.import convoInit, convoperlevel, clear_lower_nametable, oam
+.import convoInit, convoperlevel, clear_lower_nametable, oam, cnrom_bank_switch
 
 .export title_init, title_update, write_text_at_x_y, pointer 
 
@@ -41,11 +41,11 @@ aspect_pal2:
 .byte $00, $02, $1b, $04
 
 PRESS_START:
-.asciiz "PRESS START BUTTON"
+.asciiz "PR*SS ST*RT B*TT*N"
 COPYRIGHT:
-.asciiz "COPYRIGHT 2019"
+.asciiz "C*PYR*GH*T 20*"
 NICOLE_EXPRESS:
-.asciiz "NICOLE EXPRESS"
+.asciiz "N*C**E *XPR**S"
 
 location_by_aspect:
 .byte $00, $97, $9e, $a5 
@@ -266,6 +266,8 @@ train_update:
         lda #$05
         ldx #$00
         jsr FamiToneSfxPlay
+        lda #$01
+	    jsr cnrom_bank_switch
     :
     lda enemy_x 
     cmp #$89 
@@ -273,6 +275,8 @@ train_update:
         lda #$05
         ldx #$00
         jsr FamiToneSfxPlay
+        lda #$00
+	    jsr cnrom_bank_switch
     :
     jsr gamepad_poll
     lda gamepad 

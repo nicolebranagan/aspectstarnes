@@ -7,7 +7,7 @@
 .import FamiToneInit, MusicData, FamiToneSfxInit, SfxData
 
 .exportzp gameState, GAME_RUNNING, GAME_INIT, GAME_DEAD, GAME_PAUSE, GAME_TITLE, GAME_PRELEVEL, GAME_WIN, GAME_CONVO, GAME_CREDITS
-.export frame, ppu_address_tile
+.export frame, ppu_address_tile, cnrom_bank_switch
 
 .segment "ZEROPAGE"
 temp:		.res 1
@@ -29,13 +29,13 @@ GAME_CREDITS=$08
 
 .segment "HEADER"
 
-INES_MAPPER = 0 ; 0 = NROM
+INES_MAPPER = 3 ; 3 = CNROM
 INES_MIRROR = 0 ; 0 = horizontal mirroring, 1 = vertical mirroring
 INES_SRAM   = 0 ; 1 = battery backed SRAM at $6000-7FFF
 
 .byte 'N', 'E', 'S', $1A ; ID
 .byte $02 ; 16k PRG chunk count
-.byte $01 ; 8k CHR chunk count
+.byte $04 ; 8k CHR chunk count
 .byte INES_MIRROR | (INES_SRAM << 1) | ((INES_MAPPER & $f) << 4)
 .byte (INES_MAPPER & %11110000)
 .byte $0, $0, $0, $0, $0, $0, $0, $0 ; padding
@@ -45,8 +45,8 @@ INES_SRAM   = 0 ; 1 = battery backed SRAM at $6000-7FFF
 ;
 
 .segment "TILES"
-.incbin "background.chr"
-.incbin "sprite.chr"
+.incbin "../gfx/bank0.chr"
+.incbin "../gfx/bank1.chr"
 
 ;
 ; vectors placed at top 6 bytes of memory area
@@ -119,6 +119,7 @@ reset:
 ;
 main:
 	lda #$00
+	jsr cnrom_bank_switch
 	sta nmi_mask
 	sta nmi_scroll
 	jsr title_init
@@ -167,6 +168,16 @@ ppu_address_tile:
 	txa
 	ora temp
 	sta $2006 ; low bits of Y + X
+	rts
+
+cnrom_index:
+.byte $0, $1, $2, $3
+
+; put a in thing
+; clobbers x
+cnrom_bank_switch:
+	tax
+	sta cnrom_index, x
 	rts
 
 ;
