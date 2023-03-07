@@ -367,8 +367,7 @@ chase_update:
         sta currentLevel
         lda convoperlevel
         sta currentConvo
-        jmp skull_init
-        ;jmp convoInit
+        jmp convoInit
     :
     lda gamepad
     and #PAD_SELECT

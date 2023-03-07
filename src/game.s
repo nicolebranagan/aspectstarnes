@@ -3,7 +3,7 @@
 .import FamiToneMusicPlay, FamiToneMusicStop, FamiToneMusicPause, FamiToneSfxPlay
 .importzp currentConvo
 .import convoInit, convoperlevel, creditsUpdate, skull_update
-.import cnrom_bank_switch, prng
+.import cnrom_bank_switch, prng, skull_init
 
 .exportzp aspect, xpos, ypos, facing, FACING_DOWN, FACING_LEFT, FACING_RIGHT, FACING_UP, current_tile, moving, lives, currentLevel
 .export is_solid, get_map_tile_for_x_y, map_attributes, game_update, clear_nametable, clear_lower_nametable, draw_friend, game_preload, game_die
@@ -589,7 +589,7 @@ dead_update:
 			lda currentLevel
 			jmp game_preload
 		:
-			jsr title_init
+			jmp skull_init
 	:
 	lda timer 
 	cmp #$40
