@@ -3,7 +3,7 @@
 .import FamiToneMusicPlay, FamiToneMusicStop, FamiToneMusicPause, FamiToneSfxPlay
 .importzp currentConvo
 .import convoInit, convoperlevel, creditsUpdate
-.import cnrom_bank_switch
+.import cnrom_bank_switch, prng
 
 .exportzp aspect, xpos, ypos, facing, FACING_DOWN, FACING_LEFT, FACING_RIGHT, FACING_UP, current_tile, moving, lives, currentLevel
 .export is_solid, get_map_tile_for_x_y, map_attributes, game_update, clear_nametable, clear_lower_nametable, draw_friend, game_preload, game_die
@@ -20,6 +20,7 @@ timer:			.res 1
 currentLevel:	.res 1
 lives:			.res 1
 probability: .res 1
+alreadyInit: .res 1
 
 .segment "BSS"
 gamePointer:	.res 2
@@ -73,12 +74,10 @@ game_init:
 	lda #$00
 	jsr cnrom_bank_switch
 	sta $2001
+	sta probability
+	sta alreadyInit
 	lda currentLevel
 	tax 
-	lda palette_by_stage,X 
-	pha 
-	jsr FamiToneMusicPlay
-	pla 
 	asl 
 	tax 
 	lda level_palettes+1,X 
@@ -114,6 +113,33 @@ game_init:
 		iny 
 		cpy #$F0 
 		bcc :-
+	lda #$ff
+	sta alreadyInit
+partial_game_init:
+	lda #$00
+	sta $2001
+
+	lda currentLevel
+	tax
+	pha 
+		lda palette_by_stage,X 
+		jsr FamiToneMusicPlay
+	pla 
+	asl
+	tax
+	lda level_palettes+1,X 
+	sta pointer+1 
+	lda level_palettes,X 
+	sta pointer 
+    ldy #0
+	:; store level palettes in palette
+		lda (pointer),Y 
+		sta palette,Y 
+		iny
+		cpy #16
+		bcc :-
+
+
 	jsr draw_background
 	lda #$80
 	sta xpos
@@ -130,7 +156,7 @@ game_init:
 	sta gameState 
 	lda #$00
 	sta timer 
-    rts 
+	rts 
 
 game_preload:
 	sta currentLevel
@@ -138,7 +164,6 @@ game_preload:
 	sta $2001
 	sta nmi_scroll
 	sta nmi_mask
-	sta probability
 	ldx #0
 	: ; clear sprites
 		sta oam, X
@@ -543,13 +568,18 @@ dead_update:
 		jsr title_init
 	:
 	lda timer 
-	cmp #$5A
-	bne :+
+	cmp #$5A	
+	bne :++
 		lda #%11100001
 		sta nmi_mask
 		inc probability
-		lda currentLevel
-		jmp game_preload
+		jsr prng
+		cmp probability
+		bcc :+
+			lda currentLevel
+			jmp game_preload
+		:
+			jsr title_init
 	:
 	lda timer 
 	cmp #$40
@@ -611,7 +641,12 @@ pause_update:
 
 preload_update:
 	dec timer 
-	bne :+
+	bne :++
+		lda alreadyInit
+		beq :+
+			jsr partial_game_init
+			jmp :++
+		:
 		jsr game_init
 	:
 	jsr draw_friend
