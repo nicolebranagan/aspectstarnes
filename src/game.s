@@ -81,6 +81,7 @@ game_init:
 	sta alreadyInit
 	lda currentLevel
 	tax 
+	lda palette_by_stage,X 
 	asl 
 	tax 
 	lda level_palettes+1,X 
@@ -668,6 +669,8 @@ preload_update:
 	rts 
 
 win_update:
+	lda #$00
+	sta alreadyInit
 	inc currentLevel 
 	lda currentLevel
 	tax 
