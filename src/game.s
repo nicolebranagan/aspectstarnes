@@ -588,7 +588,7 @@ dead_update:
 			lda currentLevel
 			jmp game_preload
 		:
-			jsr skull_init
+			jmp skull_init
 	:
 	lda timer 
 	cmp #$40

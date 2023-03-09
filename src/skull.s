@@ -1,7 +1,7 @@
 .export skull_init, skull_update
 
-.import cnrom_bank_switch, clear_nametable, oam
-.importzp aspect, pointer, nmi_ready, nmi_scroll, GAME_SKULL, gameState
+.import cnrom_bank_switch, clear_nametable, oam, palette, FamiToneMusicStop
+.importzp aspect, pointer, nmi_ready, nmi_scroll, nmi_mask, GAME_SKULL, gameState
 
 skull_nametable:
   .incbin "../skull/skull.bin"
@@ -10,6 +10,7 @@ skull_init:
   lda #$00
   sta $2001 
   sta nmi_scroll
+  sta nmi_mask
   sta aspect
   jsr clear_nametable 
 
@@ -50,6 +51,11 @@ skull_init:
 
   lda #GAME_SKULL
   sta gameState
+
+  lda $0d
+  sta palette+3
+
+  jsr FamiToneMusicStop
 
   lda #$01
 	sta	nmi_ready
