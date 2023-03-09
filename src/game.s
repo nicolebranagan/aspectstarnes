@@ -588,7 +588,9 @@ dead_update:
 			lda currentLevel
 			jmp game_preload
 		:
-			jmp skull_init
+			lda #$04
+			sta currentConvo
+			jmp convoInit
 	:
 	lda timer 
 	cmp #$40

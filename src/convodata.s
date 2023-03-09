@@ -4,9 +4,9 @@
 convoperlevel:
 .byte $FF,$00,$FF,$01,$FF,$FF,$02,$FF,$FF,$03
 convodata:
-.word convo1, convo2, convo4, convo5
+.word convo1, convo2, convo4, convo5, convo6
 facedata:
-.word face1 , face2 , face4 , face5
+.word face1 , face2 , face4 , face5, face6
 
 convo1:
     .asciiz "My name is Nicole."
@@ -217,6 +217,7 @@ convo5:
     .asciiz "her, I could never hurt"
     .asciiz "her!"
     .byte $ff
+convo6:
     .asciiz "    "
     .asciiz "    "
     .asciiz "    "
@@ -249,6 +250,7 @@ face5:
     .byte $02,$0b,$00,$00
     .byte $02,$08,$00,$00
     .byte $00,$01,$03,$00
+face6:
     .byte $01,$ff,$02,$00
     .byte $01,$ff,$02,$00
     .byte $01,$ff,$02,$00

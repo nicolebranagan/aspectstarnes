@@ -52,8 +52,10 @@ skull_init:
   lda #GAME_SKULL
   sta gameState
 
-  lda $0d
+  lda #$00
   sta palette+3
+  lda #$1d
+  sta palette
 
   jsr FamiToneMusicStop
 

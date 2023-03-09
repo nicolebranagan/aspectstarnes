@@ -6,7 +6,7 @@
 .import FamiToneMusicStop, FamiToneSfxPlay, FamiToneMusicPause
 .import gamepad_poll, game_preload
 .import convodata, facedata
-.import cnrom_bank_switch
+.import cnrom_bank_switch, skull_init
 .exportzp startFaceX, currentFace, currentSubFace, faceY
 .export drawFace
 
@@ -492,7 +492,11 @@ goToLevel:
         sta currentLevel
         lda #$00
         jsr cnrom_bank_switch
-        jmp :++
+        jmp :+++
+    :
+    cmp #$04
+    bne :+
+        jmp skull_init
     :
     jsr FamiToneMusicStop
     lda currentLevel
