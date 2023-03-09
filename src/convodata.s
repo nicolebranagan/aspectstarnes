@@ -193,57 +193,65 @@ face4:
     .byte $ff
 
 convo5:
-    .asciiz "I can't believe it!"
-    .asciiz "All of our minutes of"
-    .asciiz "scheming and planning"
-    .asciiz "ruined!"
+    .asciiz "What's happening to me?"
+    .asciiz "Why can't I see clearly"
+    .asciiz "anymore?!"
     .byte $ff
-    .asciiz "All I can say about"
-    .asciiz "this is..."
-    .asciiz " "
-    .asciiz "Wan-wan!"
+    .asciiz "Stay calm, Nicole."
+    .asciiz "Focus on what's real."
+    .asciiz "We'll get through"
+    .asciiz "this. Together."
     .byte $ff
-    .asciiz "Wow, Zip, and to think"
-    .asciiz "I thought going to the"
-    .asciiz "basement would be"
-    .asciiz "boring!"
+    .asciiz "Oh, poor innocent Nicole"
+    .asciiz "can't tell what's real"
+    .asciiz "and what's not. Maybe"
+    .asciiz "she isn't here at all!"
     .byte $ff
-    .asciiz "Beginner's luck."
-    .asciiz "This is the first"
-    .asciiz "Aspect Star game, after"
-    .asciiz "all."
+    .asciiz "But you aren't so "
+    .asciiz "innocent, are you. You "
+    .asciiz "killed Princess Mary."
+    .asciiz "Admit it! It was you!"
     .byte $ff
-    .asciiz "I have no idea what"
-    .asciiz "you're talking about,"
-    .asciiz "Zip."
+    .asciiz "I didn't do it! It was"
+    .asciiz "an accident! I loved "
+    .asciiz "her, I could never hurt"
+    .asciiz "her!"
     .byte $ff
-    .asciiz "An extraterrestrial"
-    .asciiz "invasion? That sounds"
-    .asciiz "terrifying!"
+    .asciiz "    "
+    .asciiz "    "
+    .asciiz "    "
+    .asciiz "    "
     .byte $ff
-    .asciiz "You may have just"
-    .asciiz "saved the whole empire,"
-    .asciiz "Nicole!"
+    .asciiz "    "
+    .asciiz "ALL ROADS LEAD TO THE"
+    .asciiz "SAME PLACE IN THE END"
+    .asciiz "    "
     .byte $ff
-    .asciiz "For the empire, the day"
-    .asciiz "I beat the dog aliens"
-    .asciiz "from Vega V was a very"
-    .asciiz "important day!"
+    .asciiz "    "
+    .asciiz "SOME THINGS CAN NEVER"
+    .asciiz "BE FORGIVEN"
+    .asciiz "    "
     .byte $ff
-    .asciiz "But for me, it was..."
-    .asciiz " "
-    .asciiz "What day of the week"
-    .asciiz "is it again?"
+    .asciiz "    "
+    .asciiz "BUT MOST OF ALL"
+    .asciiz "    "
+    .asciiz "    "
+    .byte $ff
+    .asciiz "    "
+    .asciiz "I MISS YOU"
+    .asciiz "    "
+    .asciiz "    "
     .byte $ff, $ff
 
 face5:
-    .byte $02,$09
-    .byte $02,$08
-    .byte $00,$02
-    .byte $03,$ff
-    .byte $00,$00
-    .byte $01,$05
-    .byte $01,$04
-    .byte $00,$02
-    .byte $00,$07
+    .byte $00,$02,$00,$00
+    .byte $03,$ff,$00,$00
+    .byte $02,$0b,$00,$00
+    .byte $02,$08,$00,$00
+    .byte $00,$01,$03,$00
+    .byte $01,$ff,$02,$00
+    .byte $01,$ff,$02,$00
+    .byte $01,$ff,$02,$00
+    .byte $01,$ff,$02,$00
+    .byte $01,$ff,$02,$00
     .byte $ff

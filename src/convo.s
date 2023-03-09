@@ -27,6 +27,8 @@ temp:           .res 1
 convoDone:      .res 1
 startFaceX:     .res 1
 flickerMode:    .res 1
+flickerTimer:   .res 1
+flickerTimer2:  .res 1
 
 .segment "BSS"
 faceStorage:    .res 100
@@ -58,6 +60,7 @@ convoInit:
     lda #$00
     sta currentOffset
     sta flickerMode
+    sta flickerTimer2
 	sta $2001
     sta nmi_mask 
     sta nmi_scroll
@@ -139,6 +142,7 @@ convoNmi:
     rts 
 
 convoUpdate:
+    inc flickerTimer
     jsr writeLine
     jsr writeFace
     jsr handleInput
@@ -149,7 +153,35 @@ convoUpdate:
 
 handleFlicker:
     lda flickerMode
+    cmp #02
+    beq :+
+    cmp #03
+    beq flickerTimer3
     jmp cnrom_bank_switch
+    : 
+    lda flickerTimer
+    ror
+    and #$1f
+    tax
+    lda bank_by_flicker,X
+    jmp cnrom_bank_switch
+flickerTimer3:
+    lda flickerTimer
+    cmp #$80
+    bne :+
+        inc flickerTimer2
+        lda flickerTimer2
+        cmp #$03
+        bne :+
+        lda #$02
+        sta flickerMode
+    :
+    lda #01
+    jmp cnrom_bank_switch
+
+bank_by_flicker:
+    .byte $00, $01, $04, $01, $00, $01, $00, $01
+    .byte $00, $03, $00, $01, $03, $00, $02, $01
 
 clearScreen:
     lda #STARTX
@@ -454,9 +486,13 @@ handleInput:
 
 goToLevel:
     lda currentConvo 
-    cmp #$04 
+    cmp #$03 
     bne :+
-        ; jmp creditsInit
+        lda #$00
+        sta currentLevel
+        lda #$00
+        jsr cnrom_bank_switch
+        jmp :++
     :
     jsr FamiToneMusicStop
     lda currentLevel
