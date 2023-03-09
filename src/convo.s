@@ -3,7 +3,7 @@
 .exportzp currentConvo
 .export convoUpdate, convoInit, convoNmi
 .import FamiToneMusicPlay, clear_nametable, oam, ppu_address_tile, palette
-.import FamiToneMusicStop, FamiToneSfxPlay
+.import FamiToneMusicStop, FamiToneSfxPlay, FamiToneMusicPause
 .import gamepad_poll, game_preload
 .import convodata, facedata
 .import creditsInit, cnrom_bank_switch
@@ -203,6 +203,7 @@ writeFace:
         inx 
         lda faceStorage,X
         sta flickerMode
+        jsr FamiToneMusicPause
         pla 
         tax 
         jsr drawFace
