@@ -2,11 +2,11 @@
 
 .segment "RODATA"
 convoperlevel:
-.byte $00,$FF,$FF,$01,$FF,$FF,$03,$FF,$FF,$04
+.byte $0=0,$FF,$FF,$01,$FF,$FF,$02,$FF,$FF,$03
 convodata:
-.word convo1, convo2, convo3, convo4, convo5
+.word convo1, convo2, convo4, convo5
 facedata:
-.word face1 , face2 , face3 , face4 , face5
+.word face1 , face2 , face4 , face5
 
 convo1:
     .asciiz "My name is Nicole."
@@ -97,64 +97,99 @@ face2:
     .byte $ff
 
 convo4:
-    .asciiz "Well, Zip, we fought off"
-    .asciiz "the birds, but who could"
-    .asciiz "be behind all of this?"
+    .asciiz "Who's there?!"
+    .asciiz "        "
+    .asciiz "        "
+    .asciiz "        "
     .byte $ff 
-    .asciiz "Maybe it's just rational"
-    .asciiz "self-interest; we do eat"
-    .asciiz "mice and birds, after"
-    .asciiz "all."
+    .asciiz "Hi, Nicole. It's me!"
+    .asciiz "Your friend, the dog"
+    .asciiz "-girl alien from"
+    .asciiz "Sirius. How you doing?"
     .byte $ff
-    .asciiz "No, no, there has to be"
-    .asciiz "someone behind this..."
+    .asciiz "You again?! Why are "
+    .asciiz "you here?"
+    .asciiz "And weren't you from"
+    .asciiz "Vega V?"
     .byte $ff
-    .asciiz "Wan-wan!"
+    .asciiz "I'm just here to keep"
+    .asciiz "you company. You look so"
+    .asciiz "sad and lonely."
+    .asciiz "        "
     .byte $ff
-    .asciiz "Oh my gosh! The dog"
-    .asciiz "aliens from Sirius, the"
-    .asciiz "dog star! Of course!"
+    .asciiz "I don't want your"
+    .asciiz "company! Go away!"
+    .asciiz "        "
+    .asciiz "        "
     .byte $ff
-    .asciiz "We're not from Sirius,"
-    .asciiz "we're from Vega V!"
+    .asciiz "Oh don't be like that."
+    .asciiz "I thought we were"
+    .asciiz "friends, aren't we?"
+    .asciiz "        "
     .byte $ff
-    .asciiz "But... that has nothing"
-    .asciiz "to do with dogs. I"
-    .asciiz "don't get it."
+    .asciiz "We're not friends!"
+    .asciiz "        "
+    .asciiz "        "
+    .asciiz "        "
     .byte $ff
-    .asciiz "Look. You may have"
-    .asciiz "ruined our plans here,"
-    .asciiz "but we're still going to"
-    .asciiz "take over the world!"
+    .asciiz "You're just a figment"
+    .asciiz "of my imagination,"
+    .asciiz "taunting me!"
+    .asciiz "        "
     .byte $ff
-    .asciiz "But I live in the world!"
+    .asciiz "Suit yourself. But I'll"
+    .asciiz "always be here."
+    .asciiz "Watching you."
+    .asciiz "        "
     .byte $ff
-    .asciiz "Too bad!"
+    .asciiz "Waiting for you to"
+    .asciiz "crack.        "
+    .asciiz "        "
+    .asciiz "        "
     .byte $ff
-    .asciiz "We'll be hiding in the"
-    .asciiz "one place that hasn't"
-    .asciiz "been corrupted by"
-    .asciiz "cat-ipalism..."
+    .asciiz "No, no, no! I'll never"
+    .asciiz "crack! You can't stop me!"
+    .asciiz "        "
+    .asciiz "        "
     .byte $ff
-    .asciiz "SPACE!"
-    .asciiz " "
-    .asciiz " "
-    .asciiz "Wan-wan!"
+    .asciiz "Nicole, calm down! It'll"
+    .asciiz "be okay!"
+    .asciiz "        "
+    .asciiz "        "
+    .byte $ff
+    .asciiz "But it's not okay."
+    .asciiz "You'll never be able to"
+    .asciiz "undo what you did."
+    .asciiz "        "
+    .byte $ff
+    .asciiz "I can't take it anymore!"
+    .asciiz "        "
+    .asciiz "        "
+    .asciiz "        "
+    .byte $ff
+    .asciiz "Please Nicole, calm "
+    .asciiz "down! Take it one step"
+    .asciiz "at a time! You have me"
+    .asciiz "still, and you have "
+    .asciiz "yourself. Please..."
     .byte $ff,$ff
 
 face4:
-    .byte $00,$00
-    .byte $03,$ff
-    .byte $00,$03
-    .byte $02,$08
-    .byte $00,$01
-    .byte $02,$0b
-    .byte $00,$07
-    .byte $02,$0a 
-    .byte $00,$01
-    .byte $02,$08
-    .byte $02,$0a
-    .byte $02,$08
+    .byte $00,$01,$01,$00
+    .byte $02,$08,$00,$00
+    .byte $00,$01,$00,$00
+    .byte $02,$0b,$00,$00
+    .byte $00,$03,$00,$00
+    .byte $02,$09,$00,$00
+    .byte $00,$01,$00,$00
+    .byte $00,$01,$01,$00
+    .byte $02,$0a,$00,$00
+    .byte $02,$0b,$00,$00
+    .byte $00,$01,$01,$00
+    .byte $03,$ff,$00,$00
+    .byte $02,$0b,$00,$00
+    .byte $00,$02,$01,$00
+    .byte $03,$ff,$00,$00
     .byte $ff
 
 convo5:

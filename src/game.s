@@ -2,7 +2,7 @@
 .import palette, bullet_init, enemy_init, gamepad_poll, oam, bullet_fire, bullet_draw, bullet_update, enemy_init, enemy_draw, enemy_update, ppu_address_tile, title_update, write_text_at_x_y, title_init, level_data, convoUpdate
 .import FamiToneMusicPlay, FamiToneMusicStop, FamiToneMusicPause, FamiToneSfxPlay
 .importzp currentConvo
-.import convoInit, convoperlevel, creditsUpdate, skull_update
+.import convoInit, convoperlevel, skull_update
 .import cnrom_bank_switch, prng, skull_init
 
 .exportzp aspect, xpos, ypos, facing, FACING_DOWN, FACING_LEFT, FACING_RIGHT, FACING_UP, current_tile, moving, lives, currentLevel, probability
@@ -257,7 +257,7 @@ FACING_RIGHT=$03
 
 .segment "RODATA"
 gameUpdate:
-	.word running_update, init_update, dead_update, pause_update, title_update, preload_update, win_update, convoUpdate, creditsUpdate, skull_update
+	.word running_update, init_update, dead_update, pause_update, title_update, preload_update, win_update, convoUpdate, 0, skull_update
 
 .segment "CODE"
 game_update: 

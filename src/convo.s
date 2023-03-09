@@ -6,7 +6,7 @@
 .import FamiToneMusicStop, FamiToneSfxPlay, FamiToneMusicPause
 .import gamepad_poll, game_preload
 .import convodata, facedata
-.import creditsInit, cnrom_bank_switch
+.import cnrom_bank_switch
 .exportzp startFaceX, currentFace, currentSubFace, faceY
 .export drawFace
 
@@ -43,7 +43,7 @@ convo_palette:
 .byte $0F,$19,$14,$20 ; sp3 
 
 music_by_convo:
-.byte $04,$04,$04,$05,$03
+.byte $04,$04,$05,$05,$03
 
 STARTX=$06
 STARTY=$02
@@ -456,7 +456,7 @@ goToLevel:
     lda currentConvo 
     cmp #$04 
     bne :+
-        jmp creditsInit
+        ; jmp creditsInit
     :
     jsr FamiToneMusicStop
     lda currentLevel
