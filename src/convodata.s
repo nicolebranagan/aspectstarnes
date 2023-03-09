@@ -39,23 +39,13 @@ convo1:
     .asciiz "          "
     .asciiz "          "
     .byte $ff
-    .asciiz "          "
-    .asciiz "          "
-    .asciiz "          "
-    .asciiz "          "
-    .byte $ff
-    .asciiz "          "
-    .asciiz "          "
-    .asciiz "          "
-    .asciiz "          "
-    .byte $ff
     .asciiz "Zip isn't very nice"
     .asciiz "sometimes."
     .asciiz "But I like her anyways."
     .asciiz "Let's go!"
     .byte $ff
-    .asciiz "          "
-    .asciiz "          "
+    .asciiz "I'm your best friend,"
+    .asciiz "Nicole!"
     .asciiz "          "
     .asciiz "          "
     .byte $ff, $ff
@@ -67,39 +57,43 @@ face1:
     .byte $03,$ff,$01,$00
     .byte $00,$00,$01,$00
     .byte $03,$ff,$01,$00
-    .byte $03,$ff,$00,$00
-    .byte $03,$ff,$01,$00
     .byte $00,$02,$00,$00
     .byte $03,$ff,$00,$00
     .byte $ff
 
 convo2:
-    .asciiz "There sure are a lot of"
-    .asciiz "mice here..."
+    .asciiz "I can't believe I did"
+    .asciiz "that... Don't I have a"
+    .asciiz "regret?"
     .byte $ff
-    .asciiz "Maybe I should ask the"
-    .asciiz "Princess what to do"
-    .asciiz "about them all."
+    .asciiz "I'm sorry Nicole, I "
+    .asciiz "don't know what to say."
+    .asciiz " "
     .byte $ff
-    .asciiz "Isn't she busy?"
-    .asciiz "Can't you take care of"
-    .asciiz "them yourself?"
+    .asciiz "You're supposed to make"
+    .asciiz "me feel better, Zip!"
+    .asciiz " "
     .byte $ff
-    .asciiz "Good call, Zip!"
-    .asciiz "Those mice are no match"
-    .asciiz "for a well trained cat!"
+    .asciiz "But you can't. You're "
+    .asciiz "just a stupid toy. You "
+    .asciiz "can't help me."
     .byte $ff
-    .asciiz "So I should do a half"
-    .asciiz "decent job at least,"
-    .asciiz "right?"
+    .asciiz "Hey, I'm not stupid!"
+    .asciiz "I'm here for you,"
+    .asciiz "Nicole. Always."
+    .byte $ff
+    .asciiz "No you're not. You're"
+    .asciiz "just a toy. And I'm "
+    .asciiz "alone..."
     .byte $ff,$ff
 
 face2:
-    .byte $00,$03
-    .byte $00,$00
-    .byte $03,$ff
-    .byte $00,$02
-    .byte $00,$07
+    .byte $00,$00,$01,$00
+    .byte $03,$ff,$00,$00
+    .byte $00,$01,$00,$00
+    .byte $00,$00,$01,$00
+    .byte $03,$ff,$00,$00
+    .byte $00,$02,$01,$00
     .byte $ff
 
 convo3:
