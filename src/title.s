@@ -6,7 +6,7 @@
 .import palette, clear_nametable, ppu_address_tile, gamepad_poll, game_preload, draw_friend, enemy_draw, bullet_draw
 .import FamiToneMusicPlay, FamiToneSfxPlay, FamiToneMusicStop
 .import convoInit, convoperlevel, clear_lower_nametable, oam, cnrom_bank_switch
-.import skull_init
+.import skull_init, game_preload
 
 .export title_init, title_update, write_text_at_x_y, pointer 
 
@@ -365,11 +365,12 @@ chase_update:
         sta lives
         lda firstLevel
         sta currentLevel
-        lda convoperlevel
-        sta currentConvo
+        lda #$04
+        ldx #$00
+        jsr FamiToneSfxPlay
         lda #00
         sta probability
-        jmp convoInit
+        jmp game_preload
     :
     lda gamepad
     and #PAD_SELECT
