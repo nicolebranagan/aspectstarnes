@@ -2,7 +2,7 @@
 
 .segment "RODATA"
 convoperlevel:
-.byte $00,$01,$FF,$02,$FF,$FF,$03,$FF,$FF,$04
+.byte $00,$FF,$FF,$01,$FF,$FF,$03,$FF,$FF,$04
 convodata:
 .word convo1, convo2, convo3, convo4, convo5
 facedata:
