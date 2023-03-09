@@ -96,38 +96,6 @@ face2:
     .byte $00,$02,$01,$00
     .byte $ff
 
-convo3:
-    .asciiz "Hey Nicole, look over"
-    .asciiz "here, behind this wall!"
-    .byte $ff
-    .asciiz "How'd you manage to see"
-    .asciiz "that from within my"
-    .asciiz "pocket, Zip--"
-    .byte $ff
-    .asciiz "Holy crap! It's an"
-    .asciiz "entire hidden base!"
-    .byte $ff
-    .asciiz "We're in trouble now!"
-    .asciiz "The mice have joined"
-    .asciiz "with the birds to"
-    .asciiz "wipe out all felinity!"
-    .byte $ff
-    .asciiz "And only I can save"
-    .asciiz "the day!"
-    .byte $ff
-    .asciiz "Well, cats had a good"
-    .asciiz "run."
-    .byte $ff, $ff 
-
-face3:
-    .byte $03,$ff
-    .byte $00,$07 
-    .byte $00,$01
-    .byte $03,$ff 
-    .byte $00,$02
-    .byte $03,$ff
-    .byte $ff
-
 convo4:
     .asciiz "Well, Zip, we fought off"
     .asciiz "the birds, but who could"
