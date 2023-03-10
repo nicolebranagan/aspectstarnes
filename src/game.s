@@ -670,6 +670,7 @@ preload_update:
 	rts 
 
 win_update:
+	inc probability
 	lda #$00
 	sta alreadyInit
 	inc currentLevel 

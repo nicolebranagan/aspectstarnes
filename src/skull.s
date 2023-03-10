@@ -54,8 +54,28 @@ skull_init:
 
   lda #$00
   sta palette+3
+
   lda #$1d
   sta palette
+  sta palette+16
+  sta palette+17
+  sta palette+18
+  sta palette+19
+
+  sta palette+20
+  sta palette+21
+  sta palette+22
+  sta palette+23
+
+  sta palette+24
+  sta palette+25
+  sta palette+26
+  sta palette+27
+
+  sta palette+28
+  sta palette+29
+  sta palette+30
+  sta palette+31
 
   jsr FamiToneMusicStop
 
